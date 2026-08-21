@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>5K Map</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+      <circle cx="15" cy="15" r="13" stroke="#e8b85c" stroke-width="1.4"/>
+      <path d="M15 4 L15 26 M4 15 L26 15" stroke="#263049" stroke-width="1"/>
+      <path d="M15 8 L18 15 L15 22 L12 15 Z" fill="#e8b85c"/>
+    </svg>
+    <h1>5K Map — <span class="team-name">Team</span></h1>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat">
+      <span class="label">Countries 5K'd</span>
+      <span class="value" id="stat-countries">–</span>
+    </div>
+    <div class="stat">
+      <span class="label">Total 5Ks</span>
+      <span class="value" id="stat-total">–</span>
+    </div>
+    <div class="stat">
+      <span class="label">Most 5K'd</span>
+      <span class="value" id="stat-top">–</span>
+    </div>
+  </div>
+
+  <select id="team-switcher"></select>
+</header>
+
+<main>
+  <svg id="map"></svg>
+
+  <div id="legend">
+    <div class="legend-title">Times 5K'd</div>
+    <div class="gradient-bar"></div>
+    <div class="gradient-labels">
+      <span id="legend-min">1</span>
+      <span id="legend-max">–</span>
+    </div>
+    <div class="unvisited-row">
+      <span class="swatch"></span>
+      <span>Not yet 5K'd</span>
+    </div>
+  </div>
+
+  <div id="status"></div>
+</main>
+
+<div id="tooltip"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5/papaparse.min.js"></script>
+<script src="js/teams-config.js"></script>
+<script src="js/map.js"></script>
+</body>
+</html>

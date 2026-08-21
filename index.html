@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>5K Maps</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="landing-wrap">
+  <h1>5K Maps</h1>
+  <p class="sub">Pick a team to see which countries they've 5K'd on GeoGuessr.</p>
+  <div class="team-grid" id="team-grid"></div>
+</div>
+
+<script src="js/teams-config.js"></script>
+<script>
+  const grid = document.getElementById("team-grid");
+  Object.entries(TEAMS).forEach(([key, team]) => {
+    const a = document.createElement("a");
+    a.className = "team-card";
+    a.href = `map.html?team=${encodeURIComponent(key)}`;
+    a.innerHTML = `<div class="name">${team.label}</div><div class="go">View map →</div>`;
+    grid.appendChild(a);
+  });
+</script>
+</body>
+</html>
