@@ -127,7 +127,15 @@
     const width = container.clientWidth;
     const height = container.clientHeight;
 
-    const projection = d3.geoMercator().fitSize([width, height], geo);
+    // Fit the projection's scale to everything except Antarctica, so the
+    // map isn't zoomed out just to accommodate its huge Mercator-distorted
+    // bulk. Antarctica itself is still drawn afterwards — it'll just hang
+    // off the bottom of the viewBox, showing only its northern edge.
+    const geoForFit = {
+      type: "FeatureCollection",
+      features: geo.features.filter((f) => f.properties.name !== "Antarctica"),
+    };
+    const projection = d3.geoMercator().fitSize([width, height], geoForFit);
     const path = d3.geoPath(projection);
 
     svg.attr("viewBox", `0 0 ${width} ${height}`);
