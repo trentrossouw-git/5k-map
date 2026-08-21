@@ -115,6 +115,15 @@ svg#map {
   height: 100%;
   display: block;
   background: var(--bg);
+  cursor: grab;
+}
+
+svg#map:active {
+  cursor: grabbing;
+}
+
+.zoom-layer path.country {
+  cursor: pointer;
 }
 
 path.country {
@@ -225,6 +234,44 @@ path.country.pinned {
   display: inline-block;
 }
 
+/* ---------- Zoom controls ---------- */
+
+#zoom-controls {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 10;
+}
+
+#zoom-controls button {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+#zoom-controls button:hover {
+  border-color: var(--gold-dim);
+  color: var(--gold);
+}
+
+#zoom-controls #zoom-reset {
+  font-size: 0.95rem;
+}
+
 /* ---------- Loading / error state ---------- */
 
 #status {
@@ -308,4 +355,5 @@ path.country.pinned {
   .stats-row { gap: 14px; }
   #legend { left: 10px; bottom: 10px; padding: 10px 12px; }
   #legend .gradient-bar { width: 120px; }
+  #zoom-controls { right: 10px; bottom: 10px; }
 }
