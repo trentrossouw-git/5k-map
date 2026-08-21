@@ -77,22 +77,61 @@
       );
     });
 
+  // Parses "DD-MM-YYYY" (or DD/MM/YYYY, DD.MM.YYYY) into a sortable timestamp.
+  // Returns NaN for anything else so callers can fall back gracefully.
+  function parseDMY(str) {
+    if (!str) return NaN;
+    const parts = str.trim().split(/[\/\-.]/);
+    if (parts.length !== 3) return NaN;
+    const d = parseInt(parts[0], 10);
+    const m = parseInt(parts[1], 10);
+    let y = parseInt(parts[2], 10);
+    if (!d || !m || !y) return NaN;
+    if (y < 100) y += 2000;
+    const t = new Date(y, m - 1, d).getTime();
+    return Number.isNaN(t) ? NaN : t;
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
   // ---------- Render ----------
   function render(world, codeMap, rows) {
-    // Build a3 -> count from the sheet rows.
-    const counts = new Map();
+    // Sheet is one row PER 5K: date, country_code, note, maps_link. Build
+    // both a count-per-country map and a full list of dated entries per
+    // country from that.
+    const entriesByCountry = new Map(); // a3 -> [{date, note, link}, ...] sorted newest first
+
     for (const row of rows) {
       const code = (row.country_code || "").trim().toUpperCase();
-      const count = parseInt(row.count, 10);
-      if (!code || !Number.isFinite(count) || count <= 0) continue;
-      counts.set(code, (counts.get(code) || 0) + count);
+      if (!code) continue;
+      const date = (row.date || "").trim();
+      const note = (row.note || "").trim();
+      const link = (row.maps_link || "").trim();
+      if (!entriesByCountry.has(code)) entriesByCountry.set(code, []);
+      entriesByCountry.get(code).push({ date, note, link });
     }
+    entriesByCountry.forEach((list) => {
+      list.sort((a, b) => {
+        const da = parseDMY(a.date);
+        const db = parseDMY(b.date);
+        if (Number.isNaN(da) || Number.isNaN(db)) return 0;
+        return db - da;
+      });
+    });
+
+    const counts = new Map();
+    entriesByCountry.forEach((list, code) => counts.set(code, list.length));
 
     if (counts.size === 0) {
       clearStatus();
       setStatus(
         `No valid rows found in the "${team.tab}" tab yet. Add rows with ` +
-          `"country_code" (e.g. USA) and "count" columns to see them appear here.`
+          `"date" (DD-MM-YYYY), "country_code" (e.g. USA), "note", and ` +
+          `"maps_link" columns — one row per 5K — to see them appear here.`
       );
     } else {
       clearStatus();
@@ -123,7 +162,7 @@
       );
 
     // ---------- Projection & path ----------
-    const container = document.querySelector("main");
+    const container = document.querySelector(".map-pane");
     const width = container.clientWidth;
     const height = container.clientHeight;
 
@@ -192,13 +231,12 @@
         if (pinned !== d) hideTooltip();
       })
       .on("click", function (event, d) {
-        // Tap-to-pin for touch devices.
+        // Tap-to-pin for touch devices; also opens the detail panel.
         if (pinned === d) {
           pinned = null;
           hideTooltip();
         } else {
-          pinned = d;
-          showTooltip(event, d);
+          selectCountry(d);
         }
       });
 
@@ -225,9 +263,14 @@
 
     function showTooltip(event, d) {
       const c = d.a3 ? counts.get(d.a3) : null;
-      tooltip.innerHTML = `<span class="t-name">${d.displayName}</span>${
-        c ? `5K'd ${c} time${c === 1 ? "" : "s"}` : "Not 5K'd yet"
-      }`;
+      const entries = d.a3 ? entriesByCountry.get(d.a3) : null;
+      const lastDate = entries && entries[0] && entries[0].date;
+      tooltip.innerHTML =
+        `<span class="t-name">${d.displayName}</span>` +
+        (c
+          ? `5K'd ${c} time${c === 1 ? "" : "s"}` +
+            (lastDate ? `<br><span style="opacity:0.7">Last: ${lastDate}</span>` : "")
+          : "Not 5K'd yet");
       tooltip.style.left = event.clientX + "px";
       tooltip.style.top = event.clientY + "px";
       tooltip.classList.add("visible");
@@ -236,23 +279,168 @@
       tooltip.classList.remove("visible");
     }
 
-    // ---------- Stats ----------
-    const visitedEntries = [...counts.entries()];
-    statCountries.textContent = visitedEntries.length;
-    statTotal.textContent = visitedEntries.reduce((s, [, c]) => s + c, 0);
-    if (visitedEntries.length) {
-      const [topCode, topCount] = visitedEntries.sort((a, b) => b[1] - a[1])[0];
-      const topFeature = geo.features.find((f) => f.a3 === topCode);
-      statTop.textContent = `${
-        topFeature ? topFeature.displayName : topCode
-      } (${topCount})`;
-    } else {
-      statTop.textContent = "—";
+    // ---------- Zoom-to-country + pin + detail panel ----------
+    function selectCountry(d) {
+      pinned = d;
+      paths.classed("pinned", (dd) => dd === d);
+
+      const [[x0, y0], [x1, y1]] = path.bounds(d);
+      const dx = x1 - x0;
+      const dy = y1 - y0;
+      const cx = (x0 + x1) / 2;
+      const cy = (y0 + y1) / 2;
+      const scale = Math.max(1.5, Math.min(12, 0.8 / Math.max(dx / width, dy / height)));
+      const tx = width / 2 - scale * cx;
+      const ty = height / 2 - scale * cy;
+      const newTransform = d3.zoomIdentity.translate(tx, ty).scale(scale);
+
+      svg
+        .transition()
+        .duration(600)
+        .call(zoom.transform, newTransform)
+        .on("end", () => {
+          const rect = svg.node().getBoundingClientRect();
+          const [px, py] = path.centroid(d);
+          showTooltip(
+            {
+              clientX: rect.left + newTransform.applyX(px),
+              clientY: rect.top + newTransform.applyY(py),
+            },
+            d
+          );
+        });
+
+      renderCountryDetail(d);
+      highlightLeaderboard(d.a3);
     }
+
+    // ---------- Stats ----------
+    const visitedSorted = [...counts.entries()]
+      .map(([a3, count]) => ({
+        a3,
+        count,
+        feature: geo.features.find((f) => f.a3 === a3),
+      }))
+      .filter((x) => x.feature)
+      .sort((a, b) => b.count - a.count || a.feature.displayName.localeCompare(b.feature.displayName));
+
+    statCountries.textContent = visitedSorted.length;
+    statTotal.textContent = visitedSorted.reduce((s, x) => s + x.count, 0);
+    statTop.textContent = visitedSorted.length
+      ? `${visitedSorted[0].feature.displayName} (${visitedSorted[0].count})`
+      : "—";
 
     // ---------- Legend ----------
     document.getElementById("legend-min").textContent = "1";
     document.getElementById("legend-max").textContent = String(maxCount);
+
+    // ---------- Leaderboard ----------
+    const leaderboardEl = document.getElementById("leaderboard");
+    leaderboardEl.innerHTML = "";
+    if (!visitedSorted.length) {
+      leaderboardEl.innerHTML = `<li class="empty">No countries logged yet</li>`;
+    } else {
+      visitedSorted.forEach((entry, i) => {
+        const li = document.createElement("li");
+        li.dataset.a3 = entry.a3;
+        li.innerHTML =
+          `<span class="rank">${i + 1}</span>` +
+          `<span class="name">${entry.feature.displayName}</span>` +
+          `<span class="count">${entry.count}</span>`;
+        li.addEventListener("click", () => selectCountry(entry.feature));
+        leaderboardEl.appendChild(li);
+      });
+    }
+
+    function highlightLeaderboard(a3) {
+      leaderboardEl.querySelectorAll("li").forEach((li) => {
+        li.classList.toggle("active", li.dataset.a3 === a3);
+      });
+    }
+
+    // ---------- Country detail panel ----------
+    const detailEl = document.getElementById("country-detail");
+    function renderCountryDetail(d) {
+      const entries = d.a3 ? entriesByCountry.get(d.a3) : null;
+      if (!entries || !entries.length) {
+        detailEl.classList.add("hidden");
+        detailEl.innerHTML = "";
+        return;
+      }
+      detailEl.classList.remove("hidden");
+      detailEl.innerHTML =
+        `<div class="sidebar-title">${d.displayName} — ${entries.length} 5K${
+          entries.length === 1 ? "" : "s"
+        }</div>` +
+        `<ul class="entry-list">` +
+        entries
+          .map((e) => {
+            const linkHtml = e.link
+              ? `<a href="${e.link}" target="_blank" rel="noopener">View ↗</a>`
+              : "";
+            const noteHtml = e.note
+              ? `<div class="entry-note">${escapeHtml(e.note)}</div>`
+              : "";
+            return (
+              `<li>` +
+              `<div class="entry-row"><span class="entry-date">${e.date || "—"}</span>${linkHtml}</div>` +
+              noteHtml +
+              `</li>`
+            );
+          })
+          .join("") +
+        `</ul>`;
+    }
+
+    // ---------- Search ----------
+    const searchInput = document.getElementById("search-box");
+    const searchResults = document.getElementById("search-results");
+    const searchableFeatures = geo.features
+      .filter((f) => f.a3)
+      .sort((a, b) => a.displayName.localeCompare(b.displayName));
+
+    function renderSearchResults(query) {
+      searchResults.innerHTML = "";
+      if (!query) {
+        searchResults.classList.remove("visible");
+        return;
+      }
+      const q = query.toLowerCase();
+      const matches = searchableFeatures
+        .filter((f) => f.displayName.toLowerCase().includes(q))
+        .slice(0, 8);
+      if (!matches.length) {
+        searchResults.innerHTML = `<li class="no-match">No countries found</li>`;
+        searchResults.classList.add("visible");
+        return;
+      }
+      matches.forEach((f) => {
+        const c = counts.get(f.a3);
+        const li = document.createElement("li");
+        li.innerHTML = `<span>${f.displayName}</span><span class="count">${c ? c : "—"}</span>`;
+        li.addEventListener("click", () => {
+          selectCountry(f);
+          searchInput.value = f.displayName;
+          searchResults.classList.remove("visible");
+        });
+        searchResults.appendChild(li);
+      });
+      searchResults.classList.add("visible");
+    }
+
+    searchInput.addEventListener("input", (e) => renderSearchResults(e.target.value));
+    searchInput.addEventListener("focus", (e) => {
+      if (e.target.value) renderSearchResults(e.target.value);
+    });
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".search-wrap")) searchResults.classList.remove("visible");
+    });
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        const first = searchResults.querySelector("li:not(.no-match)");
+        if (first) first.click();
+      }
+    });
   }
 
   // Re-render on resize (debounced), keeping the last loaded data via reload.
