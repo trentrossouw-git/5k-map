@@ -207,6 +207,13 @@
       .attr("vector-effect", "non-scaling-stroke")
       .attr("d", path);
 
+    // Holds the on-map count label for whichever country is currently
+    // selected. Lives inside zoomLayer so it pans along with the map, but
+    // its own scale is counter-adjusted on every zoom tick so the text
+    // stays a constant on-screen size instead of ballooning when zoomed in.
+    const labelLayer = zoomLayer.append("g").attr("class", "label-layer");
+    let labelCentroid = null; // [x, y] in projected (pre-zoom) coordinates
+
     let pinned = null;
 
     const paths = zoomLayer
@@ -233,8 +240,7 @@
       .on("click", function (event, d) {
         // Tap-to-pin for touch devices; also opens the detail panel.
         if (pinned === d) {
-          pinned = null;
-          hideTooltip();
+          deselectCountry();
         } else {
           selectCountry(d);
         }
@@ -250,6 +256,12 @@
       ])
       .on("zoom", (event) => {
         zoomLayer.attr("transform", event.transform);
+        if (labelCentroid) {
+          labelLayer.attr(
+            "transform",
+            `translate(${labelCentroid[0]},${labelCentroid[1]}) scale(${1 / event.transform.k})`
+          );
+        }
       });
 
     svg.call(zoom);
@@ -260,6 +272,13 @@
       svg.transition().duration(200).call(zoom.scaleBy, 1 / 1.6);
     document.getElementById("zoom-reset").onclick = () =>
       svg.transition().duration(300).call(zoom.transform, d3.zoomIdentity);
+
+    // ---------- "Not yet 5K'd" toggle ----------
+    const unvisitedToggle = document.getElementById("unvisited-toggle");
+    unvisitedToggle.addEventListener("click", () => {
+      const isActive = unvisitedToggle.classList.toggle("active");
+      document.body.classList.toggle("show-unvisited", isActive);
+    });
 
     function showTooltip(event, d) {
       const c = d.a3 ? counts.get(d.a3) : null;
@@ -279,10 +298,32 @@
       tooltip.classList.remove("visible");
     }
 
+    // ---------- On-map count label ----------
+    function setLabel(d) {
+      labelLayer.selectAll("*").remove();
+      const c = d.a3 ? counts.get(d.a3) : null;
+      if (!c) {
+        labelCentroid = null;
+        return;
+      }
+      labelCentroid = path.centroid(d);
+      const currentK = d3.zoomTransform(svg.node()).k;
+      labelLayer
+        .attr("transform", `translate(${labelCentroid[0]},${labelCentroid[1]}) scale(${1 / currentK})`)
+        .append("text")
+        .text(c);
+    }
+    function clearLabel() {
+      labelLayer.selectAll("*").remove();
+      labelCentroid = null;
+    }
+
     // ---------- Zoom-to-country + pin + detail panel ----------
     function selectCountry(d) {
       pinned = d;
+      hideTooltip();
       paths.classed("pinned", (dd) => dd === d);
+      setLabel(d);
 
       const [[x0, y0], [x1, y1]] = path.bounds(d);
       const dx = x1 - x0;
@@ -294,24 +335,19 @@
       const ty = height / 2 - scale * cy;
       const newTransform = d3.zoomIdentity.translate(tx, ty).scale(scale);
 
-      svg
-        .transition()
-        .duration(600)
-        .call(zoom.transform, newTransform)
-        .on("end", () => {
-          const rect = svg.node().getBoundingClientRect();
-          const [px, py] = path.centroid(d);
-          showTooltip(
-            {
-              clientX: rect.left + newTransform.applyX(px),
-              clientY: rect.top + newTransform.applyY(py),
-            },
-            d
-          );
-        });
+      svg.transition().duration(600).call(zoom.transform, newTransform);
 
       renderCountryDetail(d);
       highlightLeaderboard(d.a3);
+    }
+
+    function deselectCountry() {
+      pinned = null;
+      hideTooltip();
+      clearLabel();
+      paths.classed("pinned", false);
+      renderCountryDetail(null);
+      highlightLeaderboard(null);
     }
 
     // ---------- Stats ----------
@@ -361,7 +397,7 @@
     // ---------- Country detail panel ----------
     const detailEl = document.getElementById("country-detail");
     function renderCountryDetail(d) {
-      const entries = d.a3 ? entriesByCountry.get(d.a3) : null;
+      const entries = d && d.a3 ? entriesByCountry.get(d.a3) : null;
       if (!entries || !entries.length) {
         detailEl.classList.add("hidden");
         detailEl.innerHTML = "";
