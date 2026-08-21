@@ -127,15 +127,30 @@
     const width = container.clientWidth;
     const height = container.clientHeight;
 
-    // Fit the projection's scale to everything except Antarctica, so the
-    // map isn't zoomed out just to accommodate its huge Mercator-distorted
-    // bulk. Antarctica itself is still drawn afterwards — it'll just hang
-    // off the bottom of the viewBox, showing only its northern edge.
-    const geoForFit = {
-      type: "FeatureCollection",
-      features: geo.features.filter((f) => f.properties.name !== "Antarctica"),
+    // Fit the projection's scale to a fixed lat/lon window rather than the
+    // actual data extent, so we control exactly how much of the poles show:
+    // a bare sliver of Antarctica at the south, and nothing above the
+    // northern edge of Greenland/Scandinavia at the north. Every country is
+    // still drawn afterwards — anything outside this window just gets
+    // clipped by the SVG viewBox.
+    const NORTH_LAT = 75;
+    const SOUTH_LAT = -58;
+    const fitBounds = {
+      type: "Feature",
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [-180, SOUTH_LAT],
+            [180, SOUTH_LAT],
+            [180, NORTH_LAT],
+            [-180, NORTH_LAT],
+            [-180, SOUTH_LAT],
+          ],
+        ],
+      },
     };
-    const projection = d3.geoMercator().fitSize([width, height], geoForFit);
+    const projection = d3.geoMercator().fitSize([width, height], fitBounds);
     const path = d3.geoPath(projection);
 
     svg.attr("viewBox", `0 0 ${width} ${height}`);
