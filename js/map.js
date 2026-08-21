@@ -223,7 +223,7 @@
       "BRN", "BFA", "BDI", "CMR", "CAF", "TCD", "COG", "CIV", "CUB",
       "COD", "DJI", "SLV", "GNQ", "ERI", "ETH", "FLK", "FJI",
       "ATF", "GAB", "GMB", "GIN", "GNB", "GUY", "HTI", "HND", "IRN",
-      "IRQ", "JAM", "XKX", "KWT", "LBN", "LBR", "LBY", "MWI", "MLI",
+      "IRQ", "JAM", "KWT", "LBN", "LBR", "LBY", "MWI", "MLI",
       "MRT", "MDA", "MAR", "MOZ", "MMR", "NCL", "NIC", "NER",
       "PRK", "XNC", "PNG", "SSD", "SAU", "SLE", "SLB", "SOM",
       "XSL", "SDN", "SUR", "SYR", "TJK", "TZA", "TLS", "TGO", "TTO", "TKM",
