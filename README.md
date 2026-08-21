@@ -9,18 +9,31 @@ tab in the Google Sheet and its own `?team=` link. Nothing needs to be duplicate
 ## 1. Set up the Google Sheet
 
 1. Create a Google Sheet. Make **one tab per team**, named clearly (e.g. `Team A`).
-2. In each tab, row 1 must have these exact headers:
+2. In each tab, row 1 must have these exact headers, **in this order**:
 
-   | country_code | count |
-   |---|---|
-   | USA | 3 |
-   | JPN | 1 |
-   | GBR | 5 |
+   | date | country_code | note | maps_link |
+   |---|---|---|---|
+   | 14-03-2026 | USA | Guessed the license plate | https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=... |
+   | 02-04-2026 | JPN | | https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=... |
+   | 19-04-2026 | USA | | |
 
+   **One row per 5K** — not one row per country. If you 5K the USA three times,
+   that's three separate rows. The map counts rows per country automatically,
+   and keeps every date, note, and link so you can browse them in the sidebar.
+
+   - `date` — use **DD-MM-YYYY** (e.g. `14-03-2026`). Slashes or dots also work
+     (`14/03/2026`, `14.03.2026`), but stay consistent. This is parsed specifically
+     as day-month-year, so don't switch to month-first for any rows.
    - `country_code` is the ISO alpha-3 code. The full list of valid codes (and their
      names, for reference) is in [`data/country-list.json`](data/country-list.json).
-   - `count` is how many times you've 5K'd that country. One row per country — don't
-     add duplicate rows for the same country, just update the number.
+   - `note` is optional freeform text — what happened, how you got it, whatever.
+     Shows up under the date in the sidebar detail panel. Leave blank if you don't
+     want one.
+   - `maps_link` is optional — a Street View link to the exact spot. In GeoGuessr,
+     right-click the map (or use the share option) to get a link like
+     `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=...` — paste it
+     as-is. Leave blank if you don't have one; rows without a link still count
+     toward the total, they just won't have a clickable link in the sidebar.
    - Optional but recommended: select the `country_code` column → **Data → Data
      validation** → List of items → paste the codes from `country-list.json`, so
      typos get caught immediately.
@@ -83,6 +96,6 @@ files themselves.
   `js/map.js` if you want a different world map style.
 - **Mobile**: tapping a country pins its tooltip open (since there's no hover on
   touch); tapping the same country again closes it.
-- **Multiple counts per country**: if your sheet ever has two rows for the same
-  country by mistake, `map.js` sums them rather than overwriting — but it's
-  cleaner to keep one row per country.
+- **Multiple entries per country**: the sheet is one row per 5K, so the map sums
+  rows per country automatically and sorts each country's dated entries newest
+  first for the sidebar detail panel.
