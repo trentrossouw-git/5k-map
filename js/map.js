@@ -220,12 +220,12 @@
     // data/country-list.json for the full valid code list.
     const NO_COVERAGE = new Set([
       "AFG", "DZA", "AGO", "ATA", "ARM", "AZE", "BHS", "BLR", "BLZ", "BEN",
-      "BIH", "BRN", "BFA", "BDI", "CMR", "CAF", "TCD", "COG", "CIV", "CUB",
-      "CYP", "COD", "DJI", "DOM", "SLV", "GNQ", "ERI", "ETH", "FLK", "FJI",
-      "ATF", "GAB", "GMB", "GEO", "GIN", "GNB", "GUY", "HTI", "HND", "IRN",
-      "IRQ", "JAM", "XKX", "KWT", "LBN", "LBR", "LBY", "MKD", "MWI", "MLI",
-      "MRT", "MDA", "MAR", "MOZ", "MMR", "NAM", "NPL", "NCL", "NIC", "NER",
-      "PRK", "XNC", "OMN", "PNG", "PRY", "SSD", "SAU", "SLE", "SLB", "SOM",
+      "BRN", "BFA", "BDI", "CMR", "CAF", "TCD", "COG", "CIV", "CUB",
+      "COD", "DJI", "SLV", "GNQ", "ERI", "ETH", "FLK", "FJI",
+      "ATF", "GAB", "GMB", "GIN", "GNB", "GUY", "HTI", "HND", "IRN",
+      "IRQ", "JAM", "XKX", "KWT", "LBN", "LBR", "LBY", "MWI", "MLI",
+      "MRT", "MDA", "MAR", "MOZ", "MMR", "NCL", "NIC", "NER",
+      "PRK", "XNC", "PNG", "SSD", "SAU", "SLE", "SLB", "SOM",
       "XSL", "SDN", "SUR", "SYR", "TJK", "TZA", "TLS", "TGO", "TTO", "TKM",
       "UZB", "VUT", "VEN", "ESH", "YEM", "ZMB", "ZWE",
     ]);
