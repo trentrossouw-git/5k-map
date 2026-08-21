@@ -127,7 +127,7 @@
     const width = container.clientWidth;
     const height = container.clientHeight;
 
-    const projection = d3.geoNaturalEarth1().fitSize([width, height], geo);
+    const projection = d3.geoEquirectangular().fitSize([width, height], geo);
     const path = d3.geoPath(projection);
 
     svg.attr("viewBox", `0 0 ${width} ${height}`);
