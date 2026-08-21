@@ -214,6 +214,22 @@
     const labelLayer = zoomLayer.append("g").attr("class", "label-layer");
     let labelCentroid = null; // [x, y] in projected (pre-zoom) coordinates
 
+    // Countries with no official Street View / GeoGuessr coverage, per
+    // Trent's curated list (cross-checked against geometas.com). Add or
+    // remove ISO alpha-3 codes here as coverage is confirmed in-game — see
+    // data/country-list.json for the full valid code list.
+    const NO_COVERAGE = new Set([
+      "AFG", "DZA", "AGO", "ATA", "ARM", "AZE", "BHS", "BLR", "BLZ", "BEN",
+      "BIH", "BRN", "BFA", "BDI", "CMR", "CAF", "TCD", "COG", "CIV", "CUB",
+      "CYP", "COD", "DJI", "DOM", "SLV", "GNQ", "ERI", "ETH", "FLK", "FJI",
+      "ATF", "GAB", "GMB", "GEO", "GIN", "GNB", "GUY", "HTI", "HND", "IRN",
+      "IRQ", "JAM", "XKX", "KWT", "LBN", "LBR", "LBY", "MKD", "MWI", "MLI",
+      "MRT", "MDA", "MAR", "MOZ", "MMR", "NAM", "NPL", "NCL", "NIC", "NER",
+      "PRK", "XNC", "OMN", "PNG", "PRY", "SSD", "SAU", "SLE", "SLB", "SOM",
+      "XSL", "SDN", "SUR", "SYR", "TJK", "TZA", "TLS", "TGO", "TTO", "TKM",
+      "UZB", "VUT", "VEN", "ESH", "YEM", "ZMB", "ZWE",
+    ]);
+
     let pinned = null;
 
     const paths = zoomLayer
@@ -222,10 +238,12 @@
       .data(geo.features)
       .join("path")
       .attr("class", (d) => {
+        if (d.a3 && NO_COVERAGE.has(d.a3)) return "country no-coverage";
         const c = d.a3 ? counts.get(d.a3) : null;
         return "country" + (c ? "" : " unvisited");
       })
       .attr("fill", (d) => {
+        if (d.a3 && NO_COVERAGE.has(d.a3)) return null; // CSS handles this
         const c = d.a3 ? counts.get(d.a3) : null;
         return c ? colorScale(c) : null; // unvisited fill comes from CSS
       })
