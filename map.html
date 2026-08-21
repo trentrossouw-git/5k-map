@@ -37,28 +37,46 @@
 </header>
 
 <main>
-  <svg id="map"></svg>
+  <div class="app-body">
+    <aside id="sidebar">
+      <div class="sidebar-section search-wrap">
+        <input id="search-box" type="text" placeholder="Search countries…" autocomplete="off" />
+        <ul id="search-results"></ul>
+      </div>
 
-  <div id="legend">
-    <div class="legend-title">Times 5K'd</div>
-    <div class="gradient-bar"></div>
-    <div class="gradient-labels">
-      <span id="legend-min">1</span>
-      <span id="legend-max">–</span>
-    </div>
-    <div class="unvisited-row">
-      <span class="swatch"></span>
-      <span>Not yet 5K'd</span>
+      <div class="sidebar-section leaderboard-wrap">
+        <div class="sidebar-title">Leaderboard</div>
+        <ul id="leaderboard"></ul>
+      </div>
+
+      <div id="country-detail" class="sidebar-section hidden"></div>
+    </aside>
+
+    <div class="map-pane">
+      <svg id="map"></svg>
+
+      <div id="legend">
+        <div class="legend-title">Times 5K'd</div>
+        <div class="gradient-bar"></div>
+        <div class="gradient-labels">
+          <span id="legend-min">1</span>
+          <span id="legend-max">–</span>
+        </div>
+        <div class="unvisited-row">
+          <span class="swatch"></span>
+          <span>Not yet 5K'd</span>
+        </div>
+      </div>
+
+      <div id="zoom-controls">
+        <button id="zoom-in" title="Zoom in">+</button>
+        <button id="zoom-out" title="Zoom out">−</button>
+        <button id="zoom-reset" title="Reset view">⤾</button>
+      </div>
+
+      <div id="status"></div>
     </div>
   </div>
-
-  <div id="zoom-controls">
-    <button id="zoom-in" title="Zoom in">+</button>
-    <button id="zoom-out" title="Zoom out">−</button>
-    <button id="zoom-reset" title="Reset view">⤾</button>
-  </div>
-
-  <div id="status"></div>
 </main>
 
 <div id="tooltip"></div>
