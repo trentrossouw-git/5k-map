@@ -156,17 +156,21 @@
     svg.attr("viewBox", `0 0 ${width} ${height}`);
     svg.selectAll("*").remove();
 
+    // Everything that pans/zooms together lives in this group.
+    const zoomLayer = svg.append("g").attr("class", "zoom-layer");
+
     // Faint graticule for atlas texture.
     const graticule = d3.geoGraticule10();
-    svg
+    zoomLayer
       .append("path")
       .datum(graticule)
       .attr("class", "graticule")
+      .attr("vector-effect", "non-scaling-stroke")
       .attr("d", path);
 
     let pinned = null;
 
-    const paths = svg
+    const paths = zoomLayer
       .append("g")
       .selectAll("path")
       .data(geo.features)
@@ -179,6 +183,7 @@
         const c = d.a3 ? counts.get(d.a3) : null;
         return c ? colorScale(c) : null; // unvisited fill comes from CSS
       })
+      .attr("vector-effect", "non-scaling-stroke")
       .attr("d", path)
       .on("mousemove", (event, d) => showTooltip(event, d))
       .on("mouseenter", (event, d) => showTooltip(event, d))
@@ -196,6 +201,27 @@
           showTooltip(event, d);
         }
       });
+
+    // ---------- Zoom & pan (scroll to zoom, drag to pan, pinch on touch) ----------
+    const zoom = d3
+      .zoom()
+      .scaleExtent([1, 12])
+      .translateExtent([
+        [0, 0],
+        [width, height],
+      ])
+      .on("zoom", (event) => {
+        zoomLayer.attr("transform", event.transform);
+      });
+
+    svg.call(zoom);
+
+    document.getElementById("zoom-in").onclick = () =>
+      svg.transition().duration(200).call(zoom.scaleBy, 1.6);
+    document.getElementById("zoom-out").onclick = () =>
+      svg.transition().duration(200).call(zoom.scaleBy, 1 / 1.6);
+    document.getElementById("zoom-reset").onclick = () =>
+      svg.transition().duration(300).call(zoom.transform, d3.zoomIdentity);
 
     function showTooltip(event, d) {
       const c = d.a3 ? counts.get(d.a3) : null;
