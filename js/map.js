@@ -220,7 +220,7 @@
     // data/country-list.json for the full valid code list.
     const NO_COVERAGE = new Set([
       "AFG", "DZA", "AGO", "ATA", "ARM", "AZE", "BHS", "BLR", "BLZ", "BEN",
-      "BRN", "BFA", "BDI", "CMR", "CAF", "TCD", "COG", "CIV", "CUB",
+      "BRN", "BFA", "BDI", "CMR", "CAF", "TCD", "CHN", "COG", "CIV", "CUB",
       "COD", "DJI", "SLV", "GNQ", "ERI", "ETH", "FLK", "FJI",
       "ATF", "GAB", "GMB", "GIN", "GNB", "GUY", "HTI", "HND", "IRN",
       "IRQ", "JAM", "KWT", "LBN", "LBR", "LBY", "MWI", "MLI",
