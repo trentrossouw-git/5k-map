@@ -3,27 +3,88 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>5K Maps</title>
+<title>5K Map</title>
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
 
-<div class="landing-wrap">
-  <h1>5K Maps</h1>
-  <p class="sub">Pick a team to see which countries they've 5K'd on GeoGuessr.</p>
-  <div class="team-grid" id="team-grid"></div>
-</div>
+<header class="top">
+  <div class="brand">
+    <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+      <circle cx="15" cy="15" r="13" stroke="#e8b85c" stroke-width="1.4"/>
+      <path d="M15 4 L15 26 M4 15 L26 15" stroke="#263049" stroke-width="1"/>
+      <path d="M15 8 L18 15 L15 22 L12 15 Z" fill="#e8b85c"/>
+    </svg>
+    <h1>5K Map — <span class="team-name">Team</span></h1>
+  </div>
 
+  <div class="stats-row">
+    <div class="stat">
+      <span class="label">Countries 5K'd</span>
+      <span class="value" id="stat-countries">–</span>
+    </div>
+    <div class="stat">
+      <span class="label">Total 5Ks</span>
+      <span class="value" id="stat-total">–</span>
+    </div>
+    <div class="stat">
+      <span class="label">Most 5K'd</span>
+      <span class="value" id="stat-top">–</span>
+    </div>
+  </div>
+
+  <select id="team-switcher"></select>
+</header>
+
+<main>
+  <div class="app-body">
+    <aside id="sidebar">
+      <div class="sidebar-section search-wrap">
+        <input id="search-box" type="text" placeholder="Search countries…" autocomplete="off" />
+        <ul id="search-results"></ul>
+      </div>
+
+      <div class="sidebar-section leaderboard-wrap">
+        <div class="sidebar-title">Leaderboard</div>
+        <ul id="leaderboard"></ul>
+      </div>
+
+      <div id="country-detail" class="sidebar-section hidden"></div>
+    </aside>
+
+    <div class="map-pane">
+      <svg id="map"></svg>
+
+      <div id="legend">
+        <div class="legend-title">Times 5K'd</div>
+        <div class="gradient-bar"></div>
+        <div class="gradient-labels">
+          <span id="legend-min">1</span>
+          <span id="legend-max">–</span>
+        </div>
+        <button id="unvisited-toggle" class="unvisited-row" type="button">
+          <span class="swatch"></span>
+          <span>Not yet 5K'd</span>
+        </button>
+      </div>
+
+      <div id="zoom-controls">
+        <button id="zoom-in" title="Zoom in">+</button>
+        <button id="zoom-out" title="Zoom out">−</button>
+        <button id="zoom-reset" title="Reset view">⤾</button>
+      </div>
+
+      <div id="status"></div>
+    </div>
+  </div>
+</main>
+
+<div id="tooltip"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5/papaparse.min.js"></script>
 <script src="js/teams-config.js"></script>
-<script>
-  const grid = document.getElementById("team-grid");
-  Object.entries(TEAMS).forEach(([key, team]) => {
-    const a = document.createElement("a");
-    a.className = "team-card";
-    a.href = `map.html?team=${encodeURIComponent(key)}`;
-    a.innerHTML = `<div class="name">${team.label}</div><div class="go">View map →</div>`;
-    grid.appendChild(a);
-  });
-</script>
+<script src="js/map.js"></script>
 </body>
 </html>
