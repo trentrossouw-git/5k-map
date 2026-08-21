@@ -153,10 +153,13 @@
     });
 
     // ---------- Color scale ----------
-    const maxCount = Math.max(1, ...counts.values());
+    // Fixed 1–10 domain (clamped) so the color scale stays consistent across
+    // teams/sessions instead of rescaling every time someone's count changes.
+    // Anything 10+ just gets the darkest end of the gradient.
     const colorScale = d3
       .scaleSequential()
-      .domain([1, maxCount])
+      .domain([1, 10])
+      .clamp(true)
       .interpolator(
         d3.interpolateRgbBasis(["#f4d58d", "#d1495b", "#7a1f2b"])
       );
@@ -223,7 +226,7 @@
       "BRN", "BFA", "BDI", "CMR", "CAF", "TCD", "CHN", "COG", "CIV", "CUB",
       "COD", "DJI", "SLV", "GNQ", "ERI", "ETH", "FLK", "FJI",
       "ATF", "GAB", "GMB", "GIN", "GNB", "GUY", "HTI", "HND", "IRN",
-      "IRQ", "JAM", "KWT", "LBN", "LBR", "LBY", "MWI", "MLI",
+      "IRQ", "JAM", "XKX", "KWT", "LBN", "LBR", "LBY", "MWI", "MLI",
       "MRT", "MDA", "MAR", "MOZ", "MMR", "NCL", "NIC", "NER",
       "PRK", "XNC", "PNG", "SSD", "SAU", "SLE", "SLB", "SOM",
       "XSL", "SDN", "SUR", "SYR", "TJK", "TZA", "TLS", "TGO", "TTO", "TKM",
@@ -386,7 +389,7 @@
 
     // ---------- Legend ----------
     document.getElementById("legend-min").textContent = "1";
-    document.getElementById("legend-max").textContent = String(maxCount);
+    document.getElementById("legend-max").textContent = "10+";
 
     // ---------- Leaderboard ----------
     const leaderboardEl = document.getElementById("leaderboard");
