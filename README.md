@@ -24,8 +24,11 @@ tab in the Google Sheet and its own `?team=` link. Nothing needs to be duplicate
    - `date` — use **DD-MM-YYYY** (e.g. `14-03-2026`). Slashes or dots also work
      (`14/03/2026`, `14.03.2026`), but stay consistent. This is parsed specifically
      as day-month-year, so don't switch to month-first for any rows.
-   - `country_code` is the ISO alpha-3 code. The full list of valid codes (and their
-     names, for reference) is in [`data/country-list.json`](data/country-list.json).
+   - `country_code` is the ISO alpha-3 code, e.g. `JPN`, `GBR`. The full list of
+     valid codes (and their names, for reference) is in
+     [`data/country-list.json`](data/country-list.json).
+     **The United States is tracked by individual state instead of as one
+     country** — see below.
    - `note` is optional freeform text — what happened, how you got it, whatever.
      Shows up under the date in the sidebar detail panel. Leave blank if you don't
      want one.
@@ -35,8 +38,23 @@ tab in the Google Sheet and its own `?team=` link. Nothing needs to be duplicate
      as-is. Leave blank if you don't have one; rows without a link still count
      toward the total, they just won't have a clickable link in the sidebar.
    - Optional but recommended: select the `country_code` column → **Data → Data
-     validation** → List of items → paste the codes from `country-list.json`, so
-     typos get caught immediately.
+     validation** → List of items → paste the codes from `country-list.json`
+     (plus `state-list.json` for US states — see below), so typos get caught
+     immediately.
+
+   ### US states
+   Instead of one blob for the whole USA, the map shows all 50 states + DC as
+   separate trackable areas. Use `US-XX` in the `country_code` column instead of
+   `USA` — e.g. `US-CA` for California, `US-NY` for New York, `US-TX` for Texas.
+   The full list of codes is in [`data/state-list.json`](data/state-list.json).
+
+   **If you already have rows logged as plain `USA`:** those will stop showing
+   up on the map, since the USA shape no longer exists to match against — the
+   count silently drops out rather than erroring. Go back through those rows
+   and change each one to the specific state it happened in (`US-CA`, `US-TX`,
+   etc.) using `state-list.json` to look up the code. There's no way to infer
+   the state automatically from a `USA` row alone.
+
 3. **Share → General access → Anyone with the link → Viewer.** The map fetches the
    sheet as CSV client-side with no login, so it must be link-viewable (not just
    accessible to specific people).
