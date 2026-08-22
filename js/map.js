@@ -5,20 +5,44 @@
   if (!teamKey || !TEAMS[teamKey]) teamKey = teamKeys[0];
   const team = TEAMS[teamKey];
 
-  // ---------- Header: title + team switcher ----------
-  document.querySelector(".team-name").textContent = team.label;
+  // ---------- Header: page title + team dropdown ----------
   document.title = `${team.label} — 5K Map`;
 
-  const switcher = document.getElementById("team-switcher");
+  const teamDropdown = document.getElementById("team-dropdown");
+  const teamToggle = document.getElementById("team-dropdown-toggle");
+  const teamLabel = document.getElementById("team-dropdown-label");
+  const teamMenu = document.getElementById("team-dropdown-menu");
+
+  teamLabel.textContent = team.label;
+
   teamKeys.forEach((k) => {
-    const opt = document.createElement("option");
-    opt.value = k;
-    opt.textContent = TEAMS[k].label;
-    if (k === teamKey) opt.selected = true;
-    switcher.appendChild(opt);
+    const li = document.createElement("li");
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = TEAMS[k].label;
+    if (k === teamKey) btn.classList.add("current");
+    btn.addEventListener("click", () => {
+      location.href = `map.html?team=${encodeURIComponent(k)}`;
+    });
+    li.appendChild(btn);
+    teamMenu.appendChild(li);
   });
-  switcher.addEventListener("change", () => {
-    location.href = `map.html?team=${encodeURIComponent(switcher.value)}`;
+
+  function closeTeamDropdown() {
+    teamDropdown.classList.remove("open");
+    teamToggle.setAttribute("aria-expanded", "false");
+  }
+
+  teamToggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isOpen = teamDropdown.classList.toggle("open");
+    teamToggle.setAttribute("aria-expanded", String(isOpen));
+  });
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest("#team-dropdown")) closeTeamDropdown();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeTeamDropdown();
   });
 
   // ---------- Elements ----------
