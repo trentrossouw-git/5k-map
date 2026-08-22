@@ -487,6 +487,18 @@ svg#map:active {
   stroke-linejoin: round;
 }
 
+.location-dot {
+  fill: #f7ecd8;
+  stroke: #12070a;
+  stroke-width: 1.1;
+  cursor: pointer;
+  transition: fill 0.12s ease, r 0.12s ease;
+}
+
+.location-dot:hover {
+  fill: var(--gold);
+}
+
 path.country {
   stroke: var(--bg);
   stroke-width: 0.6;
