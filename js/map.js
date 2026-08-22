@@ -341,13 +341,14 @@
       });
     });
 
-    // Radius eases from 2.5 down to 2 as you zoom in. Since this is a local
-    // (pre-zoom-scale) value inside zoomLayer, the actual on-screen size
-    // still grows a lot with zoom (r * k) — this is just a slight taper on
-    // top of that natural growth, not a shrink.
+    // On-screen size eases from ~2.5px (zoomed out) up to 12px (zoomed all
+    // the way in). Since r is a local (pre-zoom-scale) value inside
+    // zoomLayer, we compute the desired on-screen size first, then divide
+    // by k to get the local r that will actually render at that size.
     function dotRadiusFor(k) {
       const t = Math.min(1, Math.max(0, (k - 1) / (12 - 1)));
-      return 2.5 - t * 0.5;
+      const onscreen = 2.5 + t * (12 - 2.5);
+      return onscreen / k;
     }
 
     const dots = pointsLayer
