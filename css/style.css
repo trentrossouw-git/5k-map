@@ -207,6 +207,43 @@ header.top {
   gap: 22px;
 }
 
+/* ---------- Custom scrollbars (sidebar, leaderboard, search results) ---------- */
+
+#sidebar,
+#leaderboard,
+#search-results {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: var(--accent-dim) transparent; /* Firefox */
+}
+
+#sidebar::-webkit-scrollbar,
+#leaderboard::-webkit-scrollbar,
+#search-results::-webkit-scrollbar {
+  width: 7px;
+}
+
+#sidebar::-webkit-scrollbar-track,
+#leaderboard::-webkit-scrollbar-track,
+#search-results::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#sidebar::-webkit-scrollbar-thumb,
+#leaderboard::-webkit-scrollbar-thumb,
+#search-results::-webkit-scrollbar-thumb {
+  background: var(--panel-border);
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+#sidebar::-webkit-scrollbar-thumb:hover,
+#leaderboard::-webkit-scrollbar-thumb:hover,
+#search-results::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-dim);
+  background-clip: padding-box;
+}
+
 .sidebar-title {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 0.72rem;
