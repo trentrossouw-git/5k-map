@@ -279,13 +279,6 @@
       .attr("vector-effect", "non-scaling-stroke")
       .attr("d", path);
 
-    // Holds the on-map count label for whichever country is currently
-    // selected. Lives inside zoomLayer so it pans along with the map, but
-    // its own scale is counter-adjusted on every zoom tick so the text
-    // stays a constant on-screen size instead of ballooning when zoomed in.
-    const labelLayer = zoomLayer.append("g").attr("class", "label-layer");
-    let labelCentroid = null; // [x, y] in projected (pre-zoom) coordinates
-
     // Countries with no official Street View / GeoGuessr coverage, per
     // Trent's curated list (cross-checked against geometas.com). Add or
     // remove ISO alpha-3 codes here as coverage is confirmed in-game — see
@@ -336,34 +329,17 @@
         }
       });
 
-    // ---------- Zoom & pan (scroll to zoom, drag to pan, pinch on touch) ----------
-    const zoom = d3
-      .zoom()
-      .scaleExtent([1, 12])
-      .translateExtent([
-        [0, 0],
-        [width, height],
-      ])
-      .on("zoom", (event) => {
-        zoomLayer.attr("transform", event.transform);
-        if (labelCentroid) {
-          labelLayer.attr(
-            "transform",
-            `translate(${labelCentroid[0]},${labelCentroid[1]}) scale(${1 / event.transform.k})`
-          );
-        }
-      });
-
-    svg.call(zoom);
-
-    document.getElementById("zoom-in").onclick = () =>
-      svg.transition().duration(200).call(zoom.scaleBy, 1.6);
-    document.getElementById("zoom-out").onclick = () =>
-      svg.transition().duration(200).call(zoom.scaleBy, 1 / 1.6);
-    document.getElementById("zoom-reset").onclick = () =>
-      svg.transition().duration(300).call(zoom.transform, d3.zoomIdentity);
-
     // ---------- Location dots (exact 5K pinpoints, from maps_link) ----------
+    // Each dot is a darkened version of its own country's current color, so
+    // it reads as "this specific spot" rather than a generic marker.
+    function darkenColor(hex, factor) {
+      const c = hex.replace("#", "");
+      const r = Math.round(parseInt(c.substring(0, 2), 16) * factor);
+      const g = Math.round(parseInt(c.substring(2, 4), 16) * factor);
+      const b = Math.round(parseInt(c.substring(4, 6), 16) * factor);
+      return `rgb(${r},${g},${b})`;
+    }
+
     const pointsLayer = zoomLayer.append("g").attr("class", "points-layer");
 
     const allPoints = [];
@@ -375,14 +351,29 @@
       });
     });
 
-    pointsLayer
+    // Dots shrink as you zoom in, rather than growing with the map (the
+    // usual behavior). baseR is the on-screen pixel size at k=1; the size
+    // decreases roughly as 1/k from there, with a floor so they never
+    // disappear or become unclickable.
+    const DOT_BASE_R = 3.2;
+    const DOT_MIN_R = 1;
+    function dotRadiusFor(k) {
+      const onscreen = Math.max(DOT_MIN_R, DOT_BASE_R / k);
+      return onscreen / k; // convert back to local (pre-zoom-scale) units
+    }
+
+    const dots = pointsLayer
       .selectAll("circle")
       .data(allPoints)
       .join("circle")
       .attr("class", "location-dot")
       .attr("cx", (d) => projection([d.lng, d.lat])[0])
       .attr("cy", (d) => projection([d.lng, d.lat])[1])
-      .attr("r", 2.4)
+      .attr("r", dotRadiusFor(1))
+      .attr("fill", (d) => {
+        const c = counts.get(d.a3) || 1;
+        return darkenColor(colorScale(c), 0.4);
+      })
       .attr("vector-effect", "non-scaling-stroke")
       .on("mousemove", (event, d) => showDotTooltip(event, d))
       .on("mouseenter", (event, d) => showDotTooltip(event, d))
@@ -414,6 +405,28 @@
       pointsLayer.style("display", isActive ? null : "none");
     });
 
+    // ---------- Zoom & pan (scroll to zoom, drag to pan, pinch on touch) ----------
+    const zoom = d3
+      .zoom()
+      .scaleExtent([1, 12])
+      .translateExtent([
+        [0, 0],
+        [width, height],
+      ])
+      .on("zoom", (event) => {
+        zoomLayer.attr("transform", event.transform);
+        dots.attr("r", dotRadiusFor(event.transform.k));
+      });
+
+    svg.call(zoom);
+
+    document.getElementById("zoom-in").onclick = () =>
+      svg.transition().duration(200).call(zoom.scaleBy, 1.6);
+    document.getElementById("zoom-out").onclick = () =>
+      svg.transition().duration(200).call(zoom.scaleBy, 1 / 1.6);
+    document.getElementById("zoom-reset").onclick = () =>
+      svg.transition().duration(300).call(zoom.transform, d3.zoomIdentity);
+
     // ---------- "Not yet 5K'd" toggle ----------
     const unvisitedToggle = document.getElementById("unvisited-toggle");
     unvisitedToggle.addEventListener("click", () => {
@@ -439,33 +452,11 @@
       tooltip.classList.remove("visible");
     }
 
-    // ---------- On-map count label ----------
-    function setLabel(d) {
-      labelLayer.selectAll("*").remove();
-      const c = d.a3 ? counts.get(d.a3) : null;
-      if (!c) {
-        labelCentroid = null;
-        return;
-      }
-      labelCentroid = path.centroid(d);
-      const currentK = d3.zoomTransform(svg.node()).k;
-      labelLayer.raise(); // ensure it renders above country fills and dots
-      labelLayer
-        .attr("transform", `translate(${labelCentroid[0]},${labelCentroid[1]}) scale(${1 / currentK})`)
-        .append("text")
-        .text(c);
-    }
-    function clearLabel() {
-      labelLayer.selectAll("*").remove();
-      labelCentroid = null;
-    }
-
     // ---------- Zoom-to-country + pin + detail panel ----------
     function selectCountry(d) {
       pinned = d;
       hideTooltip();
       paths.classed("pinned", (dd) => dd === d);
-      setLabel(d);
 
       const [[x0, y0], [x1, y1]] = path.bounds(d);
       const dx = x1 - x0;
@@ -486,7 +477,6 @@
     function deselectCountry() {
       pinned = null;
       hideTooltip();
-      clearLabel();
       paths.classed("pinned", false);
       renderCountryDetail(null);
       highlightLeaderboard(null);
