@@ -31,6 +31,10 @@
       <span class="label">Most 5K'd</span>
       <span class="value" id="stat-top">–</span>
     </div>
+    <div class="stat">
+      <span class="label">Coverage</span>
+      <span class="value" id="stat-progress">–</span>
+    </div>
   </div>
 
   <select id="team-switcher"></select>
@@ -45,8 +49,15 @@
       </div>
 
       <div class="sidebar-section leaderboard-wrap">
-        <div class="sidebar-title">Leaderboard</div>
+        <div class="sidebar-title-row">
+          <span class="sidebar-title">Leaderboard</span>
+          <div class="sort-toggle">
+            <button id="sort-count" class="active" type="button" title="Sort by count">#</button>
+            <button id="sort-alpha" type="button" title="Sort A–Z">A–Z</button>
+          </div>
+        </div>
         <ul id="leaderboard"></ul>
+        <button id="copy-summary" type="button">Copy summary</button>
       </div>
 
       <div id="country-detail" class="sidebar-section hidden"></div>
