@@ -482,6 +482,16 @@ svg#map:active {
   fill: var(--gold);
 }
 
+.dot-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 700;
+  fill: #12070a;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+  user-select: none;
+}
+
 path.country {
   stroke: var(--bg);
   stroke-width: 0.6;
