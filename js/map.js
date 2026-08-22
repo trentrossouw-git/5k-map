@@ -334,20 +334,32 @@
 
     const allPoints = [];
     entriesByCountry.forEach((list, code) => {
-      list.forEach((e) => {
+      // list is sorted newest-first; number them oldest=1 up to newest=count,
+      // so the number on each dot reflects "this was your Nth 5K here."
+      const total = list.length;
+      list.forEach((e, i) => {
         if (e.lat != null && e.lng != null) {
-          allPoints.push({ ...e, a3: code });
+          allPoints.push({ ...e, a3: code, seq: total - i });
         }
       });
     });
 
-    // On-screen size eases from ~2.5px (zoomed out) up to 12px (zoomed all
-    // the way in). Since r is a local (pre-zoom-scale) value inside
+    // On-screen dot size eases from ~2.5px (zoomed out) up to 12px (zoomed
+    // all the way in). Since r is a local (pre-zoom-scale) value inside
     // zoomLayer, we compute the desired on-screen size first, then divide
     // by k to get the local r that will actually render at that size.
     function dotRadiusFor(k) {
       const t = Math.min(1, Math.max(0, (k - 1) / (12 - 1)));
       const onscreen = 2.5 + t * (12 - 2.5);
+      return onscreen / k;
+    }
+
+    // Same idea for the number printed on each dot: too small to bother
+    // showing when zoomed out, legible by the time dots are big enough to
+    // read it comfortably.
+    function dotFontSizeFor(k) {
+      const t = Math.min(1, Math.max(0, (k - 1) / (12 - 1)));
+      const onscreen = 2 + t * (9 - 2);
       return onscreen / k;
     }
 
@@ -370,11 +382,23 @@
         if (d.link) window.open(d.link, "_blank", "noopener");
       });
 
+    // Number printed on top of each dot — pointer-events none so it never
+    // steals hover/click from the dot underneath it.
+    const dotLabels = pointsLayer
+      .selectAll("text")
+      .data(allPoints)
+      .join("text")
+      .attr("class", "dot-label")
+      .attr("x", (d) => projection([d.lng, d.lat])[0])
+      .attr("y", (d) => projection([d.lng, d.lat])[1])
+      .attr("font-size", dotFontSizeFor(1))
+      .text((d) => d.seq);
+
     function showDotTooltip(event, d) {
       const feature = geo.features.find((f) => f.a3 === d.a3);
       const countryName = feature ? feature.displayName : d.a3;
       tooltip.innerHTML =
-        `<span class="t-name">${countryName}</span>` +
+        `<span class="t-name">${countryName} #${d.seq}</span>` +
         `${d.date || "—"}` +
         (d.note ? `<br><span style="opacity:0.7">${escapeHtml(d.note)}</span>` : "") +
         (d.link ? `<br><span style="opacity:0.55">Click to view ↗</span>` : "");
@@ -401,6 +425,7 @@
       .on("zoom", (event) => {
         zoomLayer.attr("transform", event.transform);
         dots.attr("r", dotRadiusFor(event.transform.k));
+        dotLabels.attr("font-size", dotFontSizeFor(event.transform.k));
       });
 
     svg.call(zoom);
