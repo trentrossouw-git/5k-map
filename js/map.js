@@ -552,31 +552,82 @@
     // Legend is now static (fixed 1–7+ rainbow swatches hardcoded in
     // map.html), so nothing to compute here.
 
-    // ---------- Leaderboard (sortable: by count or A–Z) ----------
+    // ---------- Leaderboard (sortable: by count or A–Z; US states grouped) ----------
     const leaderboardEl = document.getElementById("leaderboard");
     const sortCountBtn = document.getElementById("sort-count");
     const sortAlphaBtn = document.getElementById("sort-alpha");
     let leaderboardSort = "count";
+    let usaExpanded = false;
+
+    // Split into the US states (rolled up into one row) and everything else.
+    const usStateEntries = visitedSorted
+      .filter((x) => x.a3.startsWith("US-"))
+      .sort((a, b) => b.count - a.count || a.feature.displayName.localeCompare(b.feature.displayName));
+    const otherEntries = visitedSorted.filter((x) => !x.a3.startsWith("US-"));
+    const usaTotal = usStateEntries.reduce((s, x) => s + x.count, 0);
+    const usaGroup = usStateEntries.length
+      ? { isUSAGroup: true, displayName: "United States", count: usaTotal, states: usStateEntries }
+      : null;
+
+    function buildDisplayList() {
+      const items = usaGroup ? [...otherEntries, usaGroup] : [...otherEntries];
+      const nameOf = (x) => (x.isUSAGroup ? x.displayName : x.feature.displayName);
+      if (leaderboardSort === "alpha") {
+        items.sort((a, b) => nameOf(a).localeCompare(nameOf(b)));
+      } else {
+        items.sort((a, b) => b.count - a.count || nameOf(a).localeCompare(nameOf(b)));
+      }
+      return items;
+    }
 
     function renderLeaderboard() {
-      const list = [...visitedSorted];
-      if (leaderboardSort === "alpha") {
-        list.sort((a, b) => a.feature.displayName.localeCompare(b.feature.displayName));
-      }
+      const items = buildDisplayList();
       leaderboardEl.innerHTML = "";
-      if (!list.length) {
+      if (!items.length) {
         leaderboardEl.innerHTML = `<li class="empty">No countries logged yet</li>`;
         return;
       }
-      list.forEach((entry, i) => {
-        const li = document.createElement("li");
-        li.dataset.a3 = entry.a3;
-        li.innerHTML =
-          `<span class="rank">${leaderboardSort === "count" ? i + 1 : "·"}</span>` +
-          `<span class="name">${entry.feature.displayName}</span>` +
-          `<span class="count">${entry.count}</span>`;
-        li.addEventListener("click", () => selectCountry(entry.feature));
-        leaderboardEl.appendChild(li);
+      items.forEach((entry, i) => {
+        if (entry.isUSAGroup) {
+          const li = document.createElement("li");
+          li.className = "usa-group" + (usaExpanded ? " expanded" : "");
+          li.innerHTML =
+            `<span class="rank">${leaderboardSort === "count" ? i + 1 : "·"}</span>` +
+            `<span class="name">${entry.displayName}</span>` +
+            `<span class="count">${entry.count}</span>` +
+            `<span class="chevron">▾</span>`;
+          li.addEventListener("click", () => {
+            usaExpanded = !usaExpanded;
+            renderLeaderboard();
+          });
+          leaderboardEl.appendChild(li);
+
+          if (usaExpanded) {
+            entry.states.forEach((s) => {
+              const subLi = document.createElement("li");
+              subLi.className = "usa-state-row";
+              subLi.dataset.a3 = s.a3;
+              subLi.innerHTML =
+                `<span class="rank"></span>` +
+                `<span class="name">${s.feature.displayName.replace(", USA", "")}</span>` +
+                `<span class="count">${s.count}</span>`;
+              subLi.addEventListener("click", (e) => {
+                e.stopPropagation();
+                selectCountry(s.feature);
+              });
+              leaderboardEl.appendChild(subLi);
+            });
+          }
+        } else {
+          const li = document.createElement("li");
+          li.dataset.a3 = entry.a3;
+          li.innerHTML =
+            `<span class="rank">${leaderboardSort === "count" ? i + 1 : "·"}</span>` +
+            `<span class="name">${entry.feature.displayName}</span>` +
+            `<span class="count">${entry.count}</span>`;
+          li.addEventListener("click", () => selectCountry(entry.feature));
+          leaderboardEl.appendChild(li);
+        }
       });
     }
 
@@ -596,6 +647,12 @@
     renderLeaderboard();
 
     function highlightLeaderboard(a3) {
+      // Selecting a state (from the map, search, or a dot) auto-expands
+      // the US group so the highlighted row is actually visible.
+      if (a3 && a3.startsWith("US-") && !usaExpanded) {
+        usaExpanded = true;
+        renderLeaderboard();
+      }
       leaderboardEl.querySelectorAll("li").forEach((li) => {
         li.classList.toggle("active", li.dataset.a3 === a3);
       });
