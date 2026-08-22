@@ -341,9 +341,15 @@
       });
     });
 
-    // Plain fixed local radius — dots naturally grow larger on screen as
-    // you zoom in (like the country borders do), which makes them easier
-    // to hit rather than harder.
+    // Radius eases from 2.5 down to 2 as you zoom in. Since this is a local
+    // (pre-zoom-scale) value inside zoomLayer, the actual on-screen size
+    // still grows a lot with zoom (r * k) — this is just a slight taper on
+    // top of that natural growth, not a shrink.
+    function dotRadiusFor(k) {
+      const t = Math.min(1, Math.max(0, (k - 1) / (12 - 1)));
+      return 2.5 - t * 0.5;
+    }
+
     const dots = pointsLayer
       .selectAll("circle")
       .data(allPoints)
@@ -351,7 +357,7 @@
       .attr("class", "location-dot")
       .attr("cx", (d) => projection([d.lng, d.lat])[0])
       .attr("cy", (d) => projection([d.lng, d.lat])[1])
-      .attr("r", 2.5)
+      .attr("r", dotRadiusFor(1))
       .attr("vector-effect", "non-scaling-stroke")
       .on("mousemove", (event, d) => showDotTooltip(event, d))
       .on("mouseenter", (event, d) => showDotTooltip(event, d))
@@ -393,6 +399,7 @@
       ])
       .on("zoom", (event) => {
         zoomLayer.attr("transform", event.transform);
+        dots.attr("r", dotRadiusFor(event.transform.k));
       });
 
     svg.call(zoom);
