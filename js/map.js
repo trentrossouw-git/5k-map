@@ -123,12 +123,43 @@
     return div.innerHTML;
   }
 
+  // Pulls {lat, lng} out of a Google Maps / Street View URL, if present.
+  // Handles the pano share format (?viewpoint=LAT,LNG), the q=/ll= query
+  // param format, and the @LAT,LNG map-view format. Returns null if none
+  // of those patterns match (e.g. shortened maps.app.goo.gl links, which
+  // can't be resolved client-side).
+  function extractLatLng(url) {
+    if (!url) return null;
+    try {
+      const u = new URL(url);
+      const viewpoint = u.searchParams.get("viewpoint");
+      if (viewpoint) {
+        const [lat, lng] = viewpoint.split(",").map(Number);
+        if (Number.isFinite(lat) && Number.isFinite(lng)) return { lat, lng };
+      }
+      const q = u.searchParams.get("q") || u.searchParams.get("ll");
+      if (q) {
+        const [lat, lng] = q.split(",").map(Number);
+        if (Number.isFinite(lat) && Number.isFinite(lng)) return { lat, lng };
+      }
+    } catch (e) {
+      // Not a parseable absolute URL — fall through to the regex below.
+    }
+    const m = url.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/);
+    if (m) {
+      const lat = parseFloat(m[1]);
+      const lng = parseFloat(m[2]);
+      if (Number.isFinite(lat) && Number.isFinite(lng)) return { lat, lng };
+    }
+    return null;
+  }
+
   // ---------- Render ----------
   function render(world, codeMap, rows) {
     // Sheet is one row PER 5K: date, country_code, note, maps_link. Build
     // both a count-per-country map and a full list of dated entries per
     // country from that.
-    const entriesByCountry = new Map(); // a3 -> [{date, note, link}, ...] sorted newest first
+    const entriesByCountry = new Map(); // a3 -> [{date, note, link, lat, lng}, ...] sorted newest first
 
     for (const row of rows) {
       const code = (row.country_code || "").trim().toUpperCase();
@@ -136,8 +167,15 @@
       const date = (row.date || "").trim();
       const note = (row.note || "").trim();
       const link = (row.maps_link || "").trim();
+      const coords = extractLatLng(link);
       if (!entriesByCountry.has(code)) entriesByCountry.set(code, []);
-      entriesByCountry.get(code).push({ date, note, link });
+      entriesByCountry.get(code).push({
+        date,
+        note,
+        link,
+        lat: coords ? coords.lat : null,
+        lng: coords ? coords.lng : null,
+      });
     }
     entriesByCountry.forEach((list) => {
       list.sort((a, b) => {
@@ -325,6 +363,57 @@
     document.getElementById("zoom-reset").onclick = () =>
       svg.transition().duration(300).call(zoom.transform, d3.zoomIdentity);
 
+    // ---------- Location dots (exact 5K pinpoints, from maps_link) ----------
+    const pointsLayer = zoomLayer.append("g").attr("class", "points-layer");
+
+    const allPoints = [];
+    entriesByCountry.forEach((list, code) => {
+      list.forEach((e) => {
+        if (e.lat != null && e.lng != null) {
+          allPoints.push({ ...e, a3: code });
+        }
+      });
+    });
+
+    pointsLayer
+      .selectAll("circle")
+      .data(allPoints)
+      .join("circle")
+      .attr("class", "location-dot")
+      .attr("cx", (d) => projection([d.lng, d.lat])[0])
+      .attr("cy", (d) => projection([d.lng, d.lat])[1])
+      .attr("r", 2.4)
+      .attr("vector-effect", "non-scaling-stroke")
+      .on("mousemove", (event, d) => showDotTooltip(event, d))
+      .on("mouseenter", (event, d) => showDotTooltip(event, d))
+      .on("mouseleave", () => {
+        if (!pinned) hideTooltip();
+      })
+      .on("click", (event, d) => {
+        event.stopPropagation();
+        if (d.link) window.open(d.link, "_blank", "noopener");
+      });
+
+    function showDotTooltip(event, d) {
+      const feature = geo.features.find((f) => f.a3 === d.a3);
+      const countryName = feature ? feature.displayName : d.a3;
+      tooltip.innerHTML =
+        `<span class="t-name">${countryName}</span>` +
+        `${d.date || "—"}` +
+        (d.note ? `<br><span style="opacity:0.7">${escapeHtml(d.note)}</span>` : "") +
+        (d.link ? `<br><span style="opacity:0.55">Click to view ↗</span>` : "");
+      tooltip.style.left = event.clientX + "px";
+      tooltip.style.top = event.clientY + "px";
+      tooltip.classList.add("visible");
+    }
+
+    const dotsToggle = document.getElementById("dots-toggle");
+    dotsToggle.classList.add("active"); // visible by default
+    dotsToggle.addEventListener("click", () => {
+      const isActive = dotsToggle.classList.toggle("active");
+      pointsLayer.style("display", isActive ? null : "none");
+    });
+
     // ---------- "Not yet 5K'd" toggle ----------
     const unvisitedToggle = document.getElementById("unvisited-toggle");
     unvisitedToggle.addEventListener("click", () => {
@@ -360,6 +449,7 @@
       }
       labelCentroid = path.centroid(d);
       const currentK = d3.zoomTransform(svg.node()).k;
+      labelLayer.raise(); // ensure it renders above country fills and dots
       labelLayer
         .attr("transform", `translate(${labelCentroid[0]},${labelCentroid[1]}) scale(${1 / currentK})`)
         .append("text")
