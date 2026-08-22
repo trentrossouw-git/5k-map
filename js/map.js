@@ -250,9 +250,10 @@
     const allFeatures = geo.features.filter((f) => f.a3 !== "USA").concat(stateFeatures);
 
     // ---------- Color scale ----------
-    // Discrete rainbow scale, 1 through 7+ (counts above 7 reuse the last
-    // color rather than extrapolating). Kept in sync with the --rainbow-N
-    // CSS variables used by the legend swatches.
+    // Discrete scale, 1 through 10+. 1–7 are flat rainbow colors; 8/9/10+
+    // use actual SVG gradient fills (bronze/silver/gold) for a metallic
+    // look rather than flat color swaps. Gradient defs are created once
+    // below and referenced by url(#...).
     const RAINBOW = [
       "#e64545", // 1 - red
       "#e8813c", // 2 - orange
@@ -260,9 +261,12 @@
       "#5cb85c", // 4 - green
       "#4a90d9", // 5 - blue
       "#6a5acd", // 6 - indigo
-      "#b350c2", // 7+ - violet
+      "#b350c2", // 7 - violet
     ];
     function colorScale(count) {
+      if (count >= 10) return "url(#fill-gold)";
+      if (count === 9) return "url(#fill-silver)";
+      if (count === 8) return "url(#fill-bronze)";
       const idx = Math.min(Math.max(count, 1), 7) - 1;
       return RAINBOW[idx];
     }
@@ -300,6 +304,45 @@
 
     svg.attr("viewBox", `0 0 ${width} ${height}`);
     svg.selectAll("*").remove();
+
+    // ---------- Metallic gradients (bronze / silver / gold, for 8/9/10+) ----------
+    const defs = svg.append("defs");
+    function addMetalGradient(id, stops) {
+      const grad = defs
+        .append("linearGradient")
+        .attr("id", id)
+        .attr("x1", "0%")
+        .attr("y1", "0%")
+        .attr("x2", "100%")
+        .attr("y2", "100%");
+      stops.forEach(([offset, color]) => {
+        grad.append("stop").attr("offset", offset).attr("stop-color", color);
+      });
+    }
+    addMetalGradient("fill-bronze", [
+      ["0%", "#5a3814"],
+      ["18%", "#a5662a"],
+      ["38%", "#e0a458"],
+      ["55%", "#8a5a28"],
+      ["78%", "#c98a42"],
+      ["100%", "#5a3814"],
+    ]);
+    addMetalGradient("fill-silver", [
+      ["0%", "#6a6a6e"],
+      ["18%", "#a8a8ac"],
+      ["38%", "#f5f5f7"],
+      ["55%", "#b4b4b8"],
+      ["78%", "#dcdce0"],
+      ["100%", "#6a6a6e"],
+    ]);
+    addMetalGradient("fill-gold", [
+      ["0%", "#7a5c12"],
+      ["18%", "#b8860b"],
+      ["38%", "#ffe066"],
+      ["55%", "#d4af37"],
+      ["78%", "#f4cf6b"],
+      ["100%", "#7a5c12"],
+    ]);
 
     // Everything that pans/zooms together lives in this group.
     const zoomLayer = svg.append("g").attr("class", "zoom-layer");
