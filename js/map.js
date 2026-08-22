@@ -577,11 +577,29 @@
       .filter((x) => x.feature)
       .sort((a, b) => b.count - a.count || a.feature.displayName.localeCompare(b.feature.displayName));
 
+    // US states are tracked individually on the map, but treated as one
+    // combined "United States" entity for the header stat and leaderboard
+    // (so e.g. 5 states 5K'd once each correctly outranks a single country
+    // 5K'd twice, rather than comparing states individually against whole
+    // countries).
+    const usStateEntries = visitedSorted
+      .filter((x) => x.a3.startsWith("US-"))
+      .sort((a, b) => b.count - a.count || a.feature.displayName.localeCompare(b.feature.displayName));
+    const otherEntries = visitedSorted.filter((x) => !x.a3.startsWith("US-"));
+    const usaTotal = usStateEntries.reduce((s, x) => s + x.count, 0);
+    const usaGroup = usStateEntries.length
+      ? { isUSAGroup: true, displayName: "United States", count: usaTotal, states: usStateEntries }
+      : null;
+
     const totalFivers = visitedSorted.reduce((s, x) => s + x.count, 0);
     statCountries.textContent = visitedSorted.length;
     statTotal.textContent = totalFivers;
-    statTop.textContent = visitedSorted.length
-      ? `${visitedSorted[0].feature.displayName} (${visitedSorted[0].count})`
+
+    const topEntry = [...otherEntries, ...(usaGroup ? [usaGroup] : [])].sort(
+      (a, b) => b.count - a.count
+    )[0];
+    statTop.textContent = topEntry
+      ? `${topEntry.isUSAGroup ? topEntry.displayName : topEntry.feature.displayName} (${topEntry.count})`
       : "—";
 
     // Coverage = visited / every country that actually has official
@@ -601,16 +619,6 @@
     const sortAlphaBtn = document.getElementById("sort-alpha");
     let leaderboardSort = "count";
     let usaExpanded = false;
-
-    // Split into the US states (rolled up into one row) and everything else.
-    const usStateEntries = visitedSorted
-      .filter((x) => x.a3.startsWith("US-"))
-      .sort((a, b) => b.count - a.count || a.feature.displayName.localeCompare(b.feature.displayName));
-    const otherEntries = visitedSorted.filter((x) => !x.a3.startsWith("US-"));
-    const usaTotal = usStateEntries.reduce((s, x) => s + x.count, 0);
-    const usaGroup = usStateEntries.length
-      ? { isUSAGroup: true, displayName: "United States", count: usaTotal, states: usStateEntries }
-      : null;
 
     function buildDisplayList() {
       const items = usaGroup ? [...otherEntries, usaGroup] : [...otherEntries];
@@ -799,8 +807,8 @@
     // ---------- Copy summary ----------
     const copySummaryBtn = document.getElementById("copy-summary");
     copySummaryBtn.addEventListener("click", () => {
-      const topLine = visitedSorted.length
-        ? `${visitedSorted[0].feature.displayName} (${visitedSorted[0].count})`
+      const topLine = topEntry
+        ? `${topEntry.isUSAGroup ? topEntry.displayName : topEntry.feature.displayName} (${topEntry.count})`
         : "—";
       const summary =
         `${team.label}: ${visitedSorted.length}/${coverableCount} countries, ` +
