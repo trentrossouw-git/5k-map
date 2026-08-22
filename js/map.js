@@ -79,6 +79,18 @@
     return r.json();
   });
 
+  const usStatesPromise = fetch(
+    "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json"
+  ).then((r) => {
+    if (!r.ok) throw new Error("Could not load US states map data.");
+    return r.json();
+  });
+
+  const stateCodeMapPromise = fetch("data/state-code-map.json").then((r) => {
+    if (!r.ok) throw new Error("Could not load US state code mapping.");
+    return r.json();
+  });
+
   const csvUrl = csvUrlForTab(team.tab);
   const dataPromise = new Promise((resolve, reject) => {
     Papa.parse(csvUrl, {
@@ -90,8 +102,10 @@
     });
   });
 
-  Promise.all([worldPromise, codeMapPromise, dataPromise])
-    .then(([world, codeMap, rows]) => render(world, codeMap, rows))
+  Promise.all([worldPromise, codeMapPromise, usStatesPromise, stateCodeMapPromise, dataPromise])
+    .then(([world, codeMap, usStates, stateCodeMap, rows]) =>
+      render(world, codeMap, usStates, stateCodeMap, rows)
+    )
     .catch((err) => {
       console.error(err);
       setStatus(
@@ -155,7 +169,7 @@
   }
 
   // ---------- Render ----------
-  function render(world, codeMap, rows) {
+  function render(world, codeMap, usStates, stateCodeMap, rows) {
     // Sheet is one row PER 5K: date, country_code, note, maps_link. Build
     // both a count-per-country map and a full list of dated entries per
     // country from that.
@@ -217,6 +231,23 @@
       f.a3 = entry ? entry.a3 : null;
       f.displayName = entry ? entry.name : f.properties.name;
     });
+
+    // ---------- US states (replace the single USA blob with 50 states + DC) ----------
+    const stateGeo = topojson.feature(usStates, usStates.objects.states);
+    const stateFeatures = [];
+    stateGeo.features.forEach((f) => {
+      const entry = stateCodeMap[f.id];
+      if (!entry) return; // territories (PR, GU, etc.) already exist as their own country-level shapes
+      f.a3 = entry.code; // e.g. "US-CA"
+      f.displayName = `${entry.name}, USA`;
+      stateFeatures.push(f);
+    });
+
+    // Every place below that used to iterate geo.features (for rendering,
+    // search, leaderboard, stats, etc.) now uses this combined list: every
+    // country except the single USA polygon, plus all 51 US states/DC in
+    // its place.
+    const allFeatures = geo.features.filter((f) => f.a3 !== "USA").concat(stateFeatures);
 
     // ---------- Color scale ----------
     // Discrete rainbow scale, 1 through 7+ (counts above 7 reuse the last
@@ -303,7 +334,7 @@
     const paths = zoomLayer
       .append("g")
       .selectAll("path")
-      .data(geo.features)
+      .data(allFeatures)
       .join("path")
       .attr("class", (d) => {
         if (d.a3 && NO_COVERAGE.has(d.a3)) return "country no-coverage";
@@ -395,7 +426,7 @@
       .text((d) => d.seq);
 
     function showDotTooltip(event, d) {
-      const feature = geo.features.find((f) => f.a3 === d.a3);
+      const feature = allFeatures.find((f) => f.a3 === d.a3);
       const countryName = feature ? feature.displayName : d.a3;
       tooltip.innerHTML =
         `<span class="t-name">${countryName}</span>` +
@@ -498,7 +529,7 @@
       .map(([a3, count]) => ({
         a3,
         count,
-        feature: geo.features.find((f) => f.a3 === a3),
+        feature: allFeatures.find((f) => f.a3 === a3),
       }))
       .filter((x) => x.feature)
       .sort((a, b) => b.count - a.count || a.feature.displayName.localeCompare(b.feature.displayName));
@@ -512,7 +543,7 @@
 
     // Coverage = visited / every country that actually has official
     // GeoGuessr coverage (i.e. everything except the NO_COVERAGE set).
-    const coverableCount = geo.features.filter(
+    const coverableCount = allFeatures.filter(
       (f) => f.a3 && !NO_COVERAGE.has(f.a3)
     ).length;
     statProgress.textContent = `${visitedSorted.length}/${coverableCount}`;
@@ -607,7 +638,7 @@
     // ---------- Search ----------
     const searchInput = document.getElementById("search-box");
     const searchResults = document.getElementById("search-results");
-    const searchableFeatures = geo.features
+    const searchableFeatures = allFeatures
       .filter((f) => f.a3)
       .sort((a, b) => a.displayName.localeCompare(b.displayName));
 
