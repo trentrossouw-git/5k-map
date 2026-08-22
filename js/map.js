@@ -68,7 +68,7 @@
   setStatus("Loading map data…");
 
   const worldPromise = fetch(
-    "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
+    "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json"
   ).then((r) => {
     if (!r.ok) throw new Error("Could not load world map data.");
     return r.json();
