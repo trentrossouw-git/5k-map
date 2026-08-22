@@ -28,6 +28,7 @@
   const statCountries = document.getElementById("stat-countries");
   const statTotal = document.getElementById("stat-total");
   const statTop = document.getElementById("stat-top");
+  const statProgress = document.getElementById("stat-progress");
 
   function setStatus(msg, isError) {
     statusEl.classList.remove("hidden");
@@ -387,33 +388,66 @@
       .filter((x) => x.feature)
       .sort((a, b) => b.count - a.count || a.feature.displayName.localeCompare(b.feature.displayName));
 
+    const totalFivers = visitedSorted.reduce((s, x) => s + x.count, 0);
     statCountries.textContent = visitedSorted.length;
-    statTotal.textContent = visitedSorted.reduce((s, x) => s + x.count, 0);
+    statTotal.textContent = totalFivers;
     statTop.textContent = visitedSorted.length
       ? `${visitedSorted[0].feature.displayName} (${visitedSorted[0].count})`
       : "—";
+
+    // Coverage = visited / every country that actually has official
+    // GeoGuessr coverage (i.e. everything except the NO_COVERAGE set).
+    const coverableCount = geo.features.filter(
+      (f) => f.a3 && !NO_COVERAGE.has(f.a3)
+    ).length;
+    statProgress.textContent = `${visitedSorted.length}/${coverableCount}`;
 
     // ---------- Legend ----------
     // Legend is now static (fixed 1–7+ rainbow swatches hardcoded in
     // map.html), so nothing to compute here.
 
-    // ---------- Leaderboard ----------
+    // ---------- Leaderboard (sortable: by count or A–Z) ----------
     const leaderboardEl = document.getElementById("leaderboard");
-    leaderboardEl.innerHTML = "";
-    if (!visitedSorted.length) {
-      leaderboardEl.innerHTML = `<li class="empty">No countries logged yet</li>`;
-    } else {
-      visitedSorted.forEach((entry, i) => {
+    const sortCountBtn = document.getElementById("sort-count");
+    const sortAlphaBtn = document.getElementById("sort-alpha");
+    let leaderboardSort = "count";
+
+    function renderLeaderboard() {
+      const list = [...visitedSorted];
+      if (leaderboardSort === "alpha") {
+        list.sort((a, b) => a.feature.displayName.localeCompare(b.feature.displayName));
+      }
+      leaderboardEl.innerHTML = "";
+      if (!list.length) {
+        leaderboardEl.innerHTML = `<li class="empty">No countries logged yet</li>`;
+        return;
+      }
+      list.forEach((entry, i) => {
         const li = document.createElement("li");
         li.dataset.a3 = entry.a3;
         li.innerHTML =
-          `<span class="rank">${i + 1}</span>` +
+          `<span class="rank">${leaderboardSort === "count" ? i + 1 : "·"}</span>` +
           `<span class="name">${entry.feature.displayName}</span>` +
           `<span class="count">${entry.count}</span>`;
         li.addEventListener("click", () => selectCountry(entry.feature));
         leaderboardEl.appendChild(li);
       });
     }
+
+    sortCountBtn.addEventListener("click", () => {
+      leaderboardSort = "count";
+      sortCountBtn.classList.add("active");
+      sortAlphaBtn.classList.remove("active");
+      renderLeaderboard();
+    });
+    sortAlphaBtn.addEventListener("click", () => {
+      leaderboardSort = "alpha";
+      sortAlphaBtn.classList.add("active");
+      sortCountBtn.classList.remove("active");
+      renderLeaderboard();
+    });
+
+    renderLeaderboard();
 
     function highlightLeaderboard(a3) {
       leaderboardEl.querySelectorAll("li").forEach((li) => {
@@ -503,6 +537,44 @@
         const first = searchResults.querySelector("li:not(.no-match)");
         if (first) first.click();
       }
+    });
+
+    // "/" focuses the search box from anywhere, unless already typing
+    // somewhere else (an input, textarea, or contenteditable).
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "/") return;
+      const tag = document.activeElement && document.activeElement.tagName;
+      const isTyping = tag === "INPUT" || tag === "TEXTAREA" || (document.activeElement && document.activeElement.isContentEditable);
+      if (isTyping) return;
+      e.preventDefault();
+      searchInput.focus();
+    });
+
+    // ---------- Copy summary ----------
+    const copySummaryBtn = document.getElementById("copy-summary");
+    copySummaryBtn.addEventListener("click", () => {
+      const topLine = visitedSorted.length
+        ? `${visitedSorted[0].feature.displayName} (${visitedSorted[0].count})`
+        : "—";
+      const summary =
+        `${team.label}: ${visitedSorted.length}/${coverableCount} countries, ` +
+        `${totalFivers} total 5Ks, most 5K'd: ${topLine}`;
+      navigator.clipboard
+        .writeText(summary)
+        .then(() => {
+          copySummaryBtn.textContent = "Copied!";
+          copySummaryBtn.classList.add("copied");
+          setTimeout(() => {
+            copySummaryBtn.textContent = "Copy summary";
+            copySummaryBtn.classList.remove("copied");
+          }, 1500);
+        })
+        .catch(() => {
+          copySummaryBtn.textContent = "Couldn't copy";
+          setTimeout(() => {
+            copySummaryBtn.textContent = "Copy summary";
+          }, 1500);
+        });
     });
   }
 
