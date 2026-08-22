@@ -470,33 +470,15 @@ svg#map:active {
   cursor: pointer;
 }
 
-.country-label {
-  pointer-events: none;
-}
-
-.country-label text {
-  font-family: 'IBM Plex Mono', monospace;
-  font-weight: 700;
-  font-size: 15px;
-  text-anchor: middle;
-  dominant-baseline: middle;
-  fill: #12070a;
-  paint-order: stroke;
-  stroke: #f7ecd8;
-  stroke-width: 3.5px;
-  stroke-linejoin: round;
-}
-
 .location-dot {
-  fill: #f7ecd8;
   stroke: #12070a;
   stroke-width: 1.1;
   cursor: pointer;
-  transition: fill 0.12s ease, r 0.12s ease;
+  transition: filter 0.12s ease;
 }
 
 .location-dot:hover {
-  fill: var(--gold);
+  filter: brightness(1.7);
 }
 
 path.country {
