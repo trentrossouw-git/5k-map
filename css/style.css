@@ -137,6 +137,62 @@ select#team-switcher {
   margin-bottom: 10px;
 }
 
+.sidebar-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.sidebar-title-row .sidebar-title {
+  margin-bottom: 0;
+}
+
+.sort-toggle {
+  display: flex;
+  gap: 4px;
+}
+
+.sort-toggle button {
+  background: var(--bg);
+  border: 1px solid var(--panel-border);
+  color: var(--text-muted);
+  border-radius: 5px;
+  padding: 3px 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.sort-toggle button:hover {
+  border-color: var(--accent-dim);
+}
+.sort-toggle button.active {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+#copy-summary {
+  margin-top: 10px;
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--panel-border);
+  color: var(--text-muted);
+  border-radius: 7px;
+  padding: 8px 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+#copy-summary:hover {
+  border-color: var(--accent-dim);
+  color: var(--text);
+}
+#copy-summary.copied {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 /* Search */
 
 .search-wrap {
@@ -216,6 +272,8 @@ select#team-switcher {
   margin: 0;
   padding: 0;
   overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 #leaderboard li {
