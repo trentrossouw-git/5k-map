@@ -330,16 +330,6 @@
       });
 
     // ---------- Location dots (exact 5K pinpoints, from maps_link) ----------
-    // Each dot is a darkened version of its own country's current color, so
-    // it reads as "this specific spot" rather than a generic marker.
-    function darkenColor(hex, factor) {
-      const c = hex.replace("#", "");
-      const r = Math.round(parseInt(c.substring(0, 2), 16) * factor);
-      const g = Math.round(parseInt(c.substring(2, 4), 16) * factor);
-      const b = Math.round(parseInt(c.substring(4, 6), 16) * factor);
-      return `rgb(${r},${g},${b})`;
-    }
-
     const pointsLayer = zoomLayer.append("g").attr("class", "points-layer");
 
     const allPoints = [];
@@ -351,15 +341,25 @@
       });
     });
 
-    // Dots shrink as you zoom in, rather than growing with the map (the
-    // usual behavior). baseR is the on-screen pixel size at k=1; the size
-    // decreases roughly as 1/k from there, with a floor so they never
-    // disappear or become unclickable.
-    const DOT_BASE_R = 3.2;
-    const DOT_MIN_R = 1;
+    // Clip each dot to its own country's exact shape, so a dot near a
+    // border can never visually bleed into a neighboring country.
+    const defs = svg.append("defs");
+    const countriesWithDots = new Set(allPoints.map((d) => d.a3));
+    countriesWithDots.forEach((a3) => {
+      const feature = geo.features.find((f) => f.a3 === a3);
+      if (!feature) return;
+      defs
+        .append("clipPath")
+        .attr("id", `clip-${a3}`)
+        .append("path")
+        .attr("d", path(feature));
+    });
+
+    // Dots stay roughly the same on-screen size at any zoom level, rather
+    // than growing with the map (the usual behavior for plain SVG shapes).
+    const DOT_BASE_R = 2;
     function dotRadiusFor(k) {
-      const onscreen = Math.max(DOT_MIN_R, DOT_BASE_R / k);
-      return onscreen / k; // convert back to local (pre-zoom-scale) units
+      return DOT_BASE_R / k; // local (pre-zoom-scale) units
     }
 
     const dots = pointsLayer
@@ -370,10 +370,7 @@
       .attr("cx", (d) => projection([d.lng, d.lat])[0])
       .attr("cy", (d) => projection([d.lng, d.lat])[1])
       .attr("r", dotRadiusFor(1))
-      .attr("fill", (d) => {
-        const c = counts.get(d.a3) || 1;
-        return darkenColor(colorScale(c), 0.4);
-      })
+      .attr("clip-path", (d) => `url(#clip-${d.a3})`)
       .attr("vector-effect", "non-scaling-stroke")
       .on("mousemove", (event, d) => showDotTooltip(event, d))
       .on("mouseenter", (event, d) => showDotTooltip(event, d))
