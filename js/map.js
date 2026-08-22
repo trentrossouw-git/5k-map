@@ -153,16 +153,22 @@
     });
 
     // ---------- Color scale ----------
-    // Fixed 1–10 domain (clamped) so the color scale stays consistent across
-    // teams/sessions instead of rescaling every time someone's count changes.
-    // Anything 10+ just gets the darkest end of the gradient.
-    const colorScale = d3
-      .scaleSequential()
-      .domain([1, 10])
-      .clamp(true)
-      .interpolator(
-        d3.interpolateRgbBasis(["#f4d58d", "#d1495b", "#7a1f2b"])
-      );
+    // Discrete rainbow scale, 1 through 7+ (counts above 7 reuse the last
+    // color rather than extrapolating). Kept in sync with the --rainbow-N
+    // CSS variables used by the legend swatches.
+    const RAINBOW = [
+      "#e64545", // 1 - red
+      "#e8813c", // 2 - orange
+      "#e0c343", // 3 - yellow
+      "#5cb85c", // 4 - green
+      "#4a90d9", // 5 - blue
+      "#6a5acd", // 6 - indigo
+      "#b350c2", // 7+ - violet
+    ];
+    function colorScale(count) {
+      const idx = Math.min(Math.max(count, 1), 7) - 1;
+      return RAINBOW[idx];
+    }
 
     // ---------- Projection & path ----------
     const container = document.querySelector(".map-pane");
@@ -388,8 +394,8 @@
       : "—";
 
     // ---------- Legend ----------
-    document.getElementById("legend-min").textContent = "1";
-    document.getElementById("legend-max").textContent = "10+";
+    // Legend is now static (fixed 1–7+ rainbow swatches hardcoded in
+    // map.html), so nothing to compute here.
 
     // ---------- Leaderboard ----------
     const leaderboardEl = document.getElementById("leaderboard");
