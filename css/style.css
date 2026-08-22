@@ -66,19 +66,98 @@ header.top {
   letter-spacing: 0.01em;
 }
 
-.brand .team-name {
+/* ---------- Team dropdown ---------- */
+
+.team-dropdown {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.team-dropdown-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--gold);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.team-dropdown-toggle:hover {
+  background: var(--bg);
+  border-color: var(--panel-border);
+}
+
+.team-dropdown.open .team-dropdown-toggle {
+  background: var(--bg);
+  border-color: var(--accent-dim);
+}
+
+.team-dropdown-toggle .chevron {
+  color: var(--gold-dim);
+  transition: transform 0.18s ease;
+}
+
+.team-dropdown.open .team-dropdown-toggle .chevron {
+  transform: rotate(180deg);
+}
+
+.team-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 190px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+  z-index: 40;
+  display: none;
+}
+
+.team-dropdown.open .team-dropdown-menu {
+  display: block;
+}
+
+.team-dropdown-menu li button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  padding: 9px 10px;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.team-dropdown-menu li button:hover {
+  background: var(--bg);
+}
+
+.team-dropdown-menu li button.current {
   color: var(--gold);
 }
 
-select#team-switcher {
-  background: var(--bg);
-  color: var(--text);
-  border: 1px solid var(--panel-border);
-  border-radius: 6px;
-  padding: 7px 10px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
-  cursor: pointer;
+.team-dropdown-menu li button.current::after {
+  content: "✓";
+  font-size: 0.75rem;
+  color: var(--gold);
 }
 
 .stats-row {
