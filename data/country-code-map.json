@@ -28,6 +28,14 @@
       "a3": "CAN",
       "name": "Canada"
     },
+    "132": {
+      "a3": "CPV",
+      "name": "Cabo Verde"
+    },
+    "136": {
+      "a3": "CYM",
+      "name": "Cayman Is."
+    },
     "140": {
       "a3": "CAF",
       "name": "Central African Rep."
@@ -56,6 +64,10 @@
       "a3": "COL",
       "name": "Colombia"
     },
+    "174": {
+      "a3": "COM",
+      "name": "Comoros"
+    },
     "178": {
       "a3": "COG",
       "name": "Congo"
@@ -63,6 +75,10 @@
     "180": {
       "a3": "COD",
       "name": "Dem. Rep. Congo"
+    },
+    "184": {
+      "a3": "COK",
+      "name": "Cook Is."
     },
     "188": {
       "a3": "CRI",
@@ -92,6 +108,10 @@
       "a3": "DNK",
       "name": "Denmark"
     },
+    "212": {
+      "a3": "DMA",
+      "name": "Dominica"
+    },
     "214": {
       "a3": "DOM",
       "name": "Dominican Rep."
@@ -120,9 +140,17 @@
       "a3": "EST",
       "name": "Estonia"
     },
+    "234": {
+      "a3": "FRO",
+      "name": "Faeroe Is."
+    },
     "238": {
       "a3": "FLK",
       "name": "Falkland Is."
+    },
+    "239": {
+      "a3": "SGS",
+      "name": "S. Geo. and the Is."
     },
     "242": {
       "a3": "FJI",
@@ -132,9 +160,17 @@
       "a3": "FIN",
       "name": "Finland"
     },
+    "248": {
+      "a3": "ALA",
+      "name": "Åland"
+    },
     "250": {
       "a3": "FRA",
       "name": "France"
+    },
+    "258": {
+      "a3": "PYF",
+      "name": "Fr. Polynesia"
     },
     "260": {
       "a3": "ATF",
@@ -168,6 +204,10 @@
       "a3": "GHA",
       "name": "Ghana"
     },
+    "296": {
+      "a3": "KIR",
+      "name": "Kiribati"
+    },
     "300": {
       "a3": "GRC",
       "name": "Greece"
@@ -175,6 +215,14 @@
     "304": {
       "a3": "GRL",
       "name": "Greenland"
+    },
+    "308": {
+      "a3": "GRD",
+      "name": "Grenada"
+    },
+    "316": {
+      "a3": "GUM",
+      "name": "Guam"
     },
     "320": {
       "a3": "GTM",
@@ -192,9 +240,21 @@
       "a3": "HTI",
       "name": "Haiti"
     },
+    "334": {
+      "a3": "HMD",
+      "name": "Heard I. and McDonald Is."
+    },
+    "336": {
+      "a3": "VAT",
+      "name": "Vatican"
+    },
     "340": {
       "a3": "HND",
       "name": "Honduras"
+    },
+    "344": {
+      "a3": "HKG",
+      "name": "Hong Kong"
     },
     "348": {
       "a3": "HUN",
@@ -296,6 +356,10 @@
       "a3": "LBY",
       "name": "Libya"
     },
+    "438": {
+      "a3": "LIE",
+      "name": "Liechtenstein"
+    },
     "440": {
       "a3": "LTU",
       "name": "Lithuania"
@@ -303,6 +367,10 @@
     "442": {
       "a3": "LUX",
       "name": "Luxembourg"
+    },
+    "446": {
+      "a3": "MAC",
+      "name": "Macao"
     },
     "450": {
       "a3": "MDG",
@@ -316,17 +384,33 @@
       "a3": "MYS",
       "name": "Malaysia"
     },
+    "462": {
+      "a3": "MDV",
+      "name": "Maldives"
+    },
     "466": {
       "a3": "MLI",
       "name": "Mali"
+    },
+    "470": {
+      "a3": "MLT",
+      "name": "Malta"
     },
     "478": {
       "a3": "MRT",
       "name": "Mauritania"
     },
+    "480": {
+      "a3": "MUS",
+      "name": "Mauritius"
+    },
     "484": {
       "a3": "MEX",
       "name": "Mexico"
+    },
+    "492": {
+      "a3": "MCO",
+      "name": "Monaco"
     },
     "496": {
       "a3": "MNG",
@@ -339,6 +423,10 @@
     "499": {
       "a3": "MNE",
       "name": "Montenegro"
+    },
+    "500": {
+      "a3": "MSR",
+      "name": "Montserrat"
     },
     "504": {
       "a3": "MAR",
@@ -356,6 +444,10 @@
       "a3": "NAM",
       "name": "Namibia"
     },
+    "520": {
+      "a3": "NRU",
+      "name": "Nauru"
+    },
     "524": {
       "a3": "NPL",
       "name": "Nepal"
@@ -363,6 +455,18 @@
     "528": {
       "a3": "NLD",
       "name": "Netherlands"
+    },
+    "531": {
+      "a3": "CUW",
+      "name": "Curaçao"
+    },
+    "533": {
+      "a3": "ABW",
+      "name": "Aruba"
+    },
+    "534": {
+      "a3": "SXM",
+      "name": "Sint Maarten"
     },
     "540": {
       "a3": "NCL",
@@ -388,9 +492,33 @@
       "a3": "NGA",
       "name": "Nigeria"
     },
+    "570": {
+      "a3": "NIU",
+      "name": "Niue"
+    },
+    "574": {
+      "a3": "NFK",
+      "name": "Norfolk Island"
+    },
     "578": {
       "a3": "NOR",
       "name": "Norway"
+    },
+    "580": {
+      "a3": "MNP",
+      "name": "N. Mariana Is."
+    },
+    "583": {
+      "a3": "FSM",
+      "name": "Micronesia"
+    },
+    "584": {
+      "a3": "MHL",
+      "name": "Marshall Is."
+    },
+    "585": {
+      "a3": "PLW",
+      "name": "Palau"
     },
     "586": {
       "a3": "PAK",
@@ -415,6 +543,10 @@
     "608": {
       "a3": "PHL",
       "name": "Philippines"
+    },
+    "612": {
+      "a3": "PCN",
+      "name": "Pitcairn Is."
     },
     "616": {
       "a3": "POL",
@@ -452,6 +584,46 @@
       "a3": "RWA",
       "name": "Rwanda"
     },
+    "652": {
+      "a3": "BLM",
+      "name": "St-Barthélemy"
+    },
+    "654": {
+      "a3": "SHN",
+      "name": "Saint Helena"
+    },
+    "659": {
+      "a3": "KNA",
+      "name": "St. Kitts and Nevis"
+    },
+    "660": {
+      "a3": "AIA",
+      "name": "Anguilla"
+    },
+    "662": {
+      "a3": "LCA",
+      "name": "Saint Lucia"
+    },
+    "663": {
+      "a3": "MAF",
+      "name": "St-Martin"
+    },
+    "666": {
+      "a3": "SPM",
+      "name": "St. Pierre and Miquelon"
+    },
+    "670": {
+      "a3": "VCT",
+      "name": "St. Vin. and Gren."
+    },
+    "674": {
+      "a3": "SMR",
+      "name": "San Marino"
+    },
+    "678": {
+      "a3": "STP",
+      "name": "São Tomé and Principe"
+    },
     "682": {
       "a3": "SAU",
       "name": "Saudi Arabia"
@@ -464,9 +636,17 @@
       "a3": "SRB",
       "name": "Serbia"
     },
+    "690": {
+      "a3": "SYC",
+      "name": "Seychelles"
+    },
     "694": {
       "a3": "SLE",
       "name": "Sierra Leone"
+    },
+    "702": {
+      "a3": "SGP",
+      "name": "Singapore"
     },
     "703": {
       "a3": "SVK",
@@ -540,6 +720,10 @@
       "a3": "TGO",
       "name": "Togo"
     },
+    "776": {
+      "a3": "TON",
+      "name": "Tonga"
+    },
     "780": {
       "a3": "TTO",
       "name": "Trinidad and Tobago"
@@ -559,6 +743,10 @@
     "795": {
       "a3": "TKM",
       "name": "Turkmenistan"
+    },
+    "796": {
+      "a3": "TCA",
+      "name": "Turks and Caicos Is."
     },
     "800": {
       "a3": "UGA",
@@ -580,6 +768,18 @@
       "a3": "GBR",
       "name": "United Kingdom"
     },
+    "831": {
+      "a3": "GGY",
+      "name": "Guernsey"
+    },
+    "832": {
+      "a3": "JEY",
+      "name": "Jersey"
+    },
+    "833": {
+      "a3": "IMN",
+      "name": "Isle of Man"
+    },
     "834": {
       "a3": "TZA",
       "name": "Tanzania"
@@ -587,6 +787,10 @@
     "840": {
       "a3": "USA",
       "name": "United States of America"
+    },
+    "850": {
+      "a3": "VIR",
+      "name": "U.S. Virgin Is."
     },
     "854": {
       "a3": "BFA",
@@ -604,6 +808,14 @@
       "a3": "VEN",
       "name": "Venezuela"
     },
+    "876": {
+      "a3": "WLF",
+      "name": "Wallis and Futuna Is."
+    },
+    "882": {
+      "a3": "WSM",
+      "name": "Samoa"
+    },
     "887": {
       "a3": "YEM",
       "name": "Yemen"
@@ -612,89 +824,121 @@
       "a3": "ZMB",
       "name": "Zambia"
     },
-    "032": {
-      "a3": "ARG",
-      "name": "Argentina"
+    "016": {
+      "a3": "ASM",
+      "name": "American Samoa"
     },
-    "044": {
-      "a3": "BHS",
-      "name": "Bahamas"
+    "086": {
+      "a3": "IOT",
+      "name": "Br. Indian Ocean Ter."
     },
-    "076": {
-      "a3": "BRA",
-      "name": "Brazil"
+    "060": {
+      "a3": "BMU",
+      "name": "Bermuda"
     },
-    "068": {
-      "a3": "BOL",
-      "name": "Bolivia"
-    },
-    "084": {
-      "a3": "BLZ",
-      "name": "Belize"
-    },
-    "072": {
-      "a3": "BWA",
-      "name": "Botswana"
-    },
-    "024": {
-      "a3": "AGO",
-      "name": "Angola"
-    },
-    "012": {
-      "a3": "DZA",
-      "name": "Algeria"
-    },
-    "050": {
-      "a3": "BGD",
-      "name": "Bangladesh"
-    },
-    "064": {
-      "a3": "BTN",
-      "name": "Bhutan"
-    },
-    "004": {
-      "a3": "AFG",
-      "name": "Afghanistan"
-    },
-    "051": {
-      "a3": "ARM",
-      "name": "Armenia"
-    },
-    "040": {
-      "a3": "AUT",
-      "name": "Austria"
-    },
-    "008": {
-      "a3": "ALB",
-      "name": "Albania"
-    },
-    "056": {
-      "a3": "BEL",
-      "name": "Belgium"
+    "092": {
+      "a3": "VGB",
+      "name": "British Virgin Is."
     },
     "090": {
       "a3": "SLB",
       "name": "Solomon Is."
     },
-    "036": {
-      "a3": "AUS",
-      "name": "Australia"
+    "096": {
+      "a3": "BRN",
+      "name": "Brunei"
+    },
+    "076": {
+      "a3": "BRA",
+      "name": "Brazil"
+    },
+    "072": {
+      "a3": "BWA",
+      "name": "Botswana"
+    },
+    "070": {
+      "a3": "BIH",
+      "name": "Bosnia and Herz."
+    },
+    "068": {
+      "a3": "BOL",
+      "name": "Bolivia"
+    },
+    "064": {
+      "a3": "BTN",
+      "name": "Bhutan"
+    },
+    "084": {
+      "a3": "BLZ",
+      "name": "Belize"
+    },
+    "056": {
+      "a3": "BEL",
+      "name": "Belgium"
+    },
+    "052": {
+      "a3": "BRB",
+      "name": "Barbados"
+    },
+    "050": {
+      "a3": "BGD",
+      "name": "Bangladesh"
+    },
+    "048": {
+      "a3": "BHR",
+      "name": "Bahrain"
+    },
+    "044": {
+      "a3": "BHS",
+      "name": "Bahamas"
     },
     "031": {
       "a3": "AZE",
       "name": "Azerbaijan"
     },
-    "096": {
-      "a3": "BRN",
-      "name": "Brunei"
+    "040": {
+      "a3": "AUT",
+      "name": "Austria"
+    },
+    "036": {
+      "a3": "AUS",
+      "name": "Ashmore and Cartier Is."
+    },
+    "051": {
+      "a3": "ARM",
+      "name": "Armenia"
+    },
+    "032": {
+      "a3": "ARG",
+      "name": "Argentina"
+    },
+    "028": {
+      "a3": "ATG",
+      "name": "Antigua and Barb."
+    },
+    "024": {
+      "a3": "AGO",
+      "name": "Angola"
+    },
+    "020": {
+      "a3": "AND",
+      "name": "Andorra"
+    },
+    "012": {
+      "a3": "DZA",
+      "name": "Algeria"
+    },
+    "008": {
+      "a3": "ALB",
+      "name": "Albania"
+    },
+    "004": {
+      "a3": "AFG",
+      "name": "Afghanistan"
     },
     "010": {
       "a3": "ATA",
       "name": "Antarctica"
-    },
-    "070": {
-      "a3": "BIH",
-      "name": "Bosnia and Herz."
     }
   },
   "byName": {
@@ -709,6 +953,14 @@
     "Kosovo": {
       "a3": "XKX",
       "name": "Kosovo"
+    },
+    "Indian Ocean Ter.": {
+      "a3": "XIO",
+      "name": "French Southern Territories (misc.)"
+    },
+    "Siachen Glacier": {
+      "a3": "XSG",
+      "name": "Siachen Glacier"
     }
   }
 }
