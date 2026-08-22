@@ -4,6 +4,10 @@
     "name": "Afghanistan"
   },
   {
+    "a3": "ALA",
+    "name": "Åland"
+  },
+  {
     "a3": "ALB",
     "name": "Albania"
   },
@@ -12,12 +16,28 @@
     "name": "Algeria"
   },
   {
+    "a3": "ASM",
+    "name": "American Samoa"
+  },
+  {
+    "a3": "AND",
+    "name": "Andorra"
+  },
+  {
     "a3": "AGO",
     "name": "Angola"
   },
   {
+    "a3": "AIA",
+    "name": "Anguilla"
+  },
+  {
     "a3": "ATA",
     "name": "Antarctica"
+  },
+  {
+    "a3": "ATG",
+    "name": "Antigua and Barb."
   },
   {
     "a3": "ARG",
@@ -26,6 +46,10 @@
   {
     "a3": "ARM",
     "name": "Armenia"
+  },
+  {
+    "a3": "ABW",
+    "name": "Aruba"
   },
   {
     "a3": "AUS",
@@ -44,8 +68,16 @@
     "name": "Bahamas"
   },
   {
+    "a3": "BHR",
+    "name": "Bahrain"
+  },
+  {
     "a3": "BGD",
     "name": "Bangladesh"
+  },
+  {
+    "a3": "BRB",
+    "name": "Barbados"
   },
   {
     "a3": "BLR",
@@ -64,6 +96,10 @@
     "name": "Benin"
   },
   {
+    "a3": "BMU",
+    "name": "Bermuda"
+  },
+  {
     "a3": "BTN",
     "name": "Bhutan"
   },
@@ -80,8 +116,16 @@
     "name": "Botswana"
   },
   {
+    "a3": "IOT",
+    "name": "Br. Indian Ocean Ter."
+  },
+  {
     "a3": "BRA",
     "name": "Brazil"
+  },
+  {
+    "a3": "VGB",
+    "name": "British Virgin Is."
   },
   {
     "a3": "BRN",
@@ -100,6 +144,10 @@
     "name": "Burundi"
   },
   {
+    "a3": "CPV",
+    "name": "Cabo Verde"
+  },
+  {
     "a3": "KHM",
     "name": "Cambodia"
   },
@@ -110,6 +158,10 @@
   {
     "a3": "CAN",
     "name": "Canada"
+  },
+  {
+    "a3": "CYM",
+    "name": "Cayman Is."
   },
   {
     "a3": "CAF",
@@ -132,8 +184,16 @@
     "name": "Colombia"
   },
   {
+    "a3": "COM",
+    "name": "Comoros"
+  },
+  {
     "a3": "COG",
     "name": "Congo"
+  },
+  {
+    "a3": "COK",
+    "name": "Cook Is."
   },
   {
     "a3": "CRI",
@@ -150,6 +210,10 @@
   {
     "a3": "CUB",
     "name": "Cuba"
+  },
+  {
+    "a3": "CUW",
+    "name": "Curaçao"
   },
   {
     "a3": "CYP",
@@ -170,6 +234,10 @@
   {
     "a3": "DJI",
     "name": "Djibouti"
+  },
+  {
+    "a3": "DMA",
+    "name": "Dominica"
   },
   {
     "a3": "DOM",
@@ -208,6 +276,10 @@
     "name": "Ethiopia"
   },
   {
+    "a3": "FRO",
+    "name": "Faeroe Is."
+  },
+  {
     "a3": "FLK",
     "name": "Falkland Is."
   },
@@ -220,12 +292,20 @@
     "name": "Finland"
   },
   {
+    "a3": "PYF",
+    "name": "Fr. Polynesia"
+  },
+  {
     "a3": "ATF",
     "name": "Fr. S. Antarctic Lands"
   },
   {
     "a3": "FRA",
     "name": "France"
+  },
+  {
+    "a3": "XIO",
+    "name": "French Southern Territories (misc.)"
   },
   {
     "a3": "GAB",
@@ -256,8 +336,20 @@
     "name": "Greenland"
   },
   {
+    "a3": "GRD",
+    "name": "Grenada"
+  },
+  {
+    "a3": "GUM",
+    "name": "Guam"
+  },
+  {
     "a3": "GTM",
     "name": "Guatemala"
+  },
+  {
+    "a3": "GGY",
+    "name": "Guernsey"
   },
   {
     "a3": "GIN",
@@ -276,8 +368,16 @@
     "name": "Haiti"
   },
   {
+    "a3": "HMD",
+    "name": "Heard I. and McDonald Is."
+  },
+  {
     "a3": "HND",
     "name": "Honduras"
+  },
+  {
+    "a3": "HKG",
+    "name": "Hong Kong"
   },
   {
     "a3": "HUN",
@@ -308,6 +408,10 @@
     "name": "Ireland"
   },
   {
+    "a3": "IMN",
+    "name": "Isle of Man"
+  },
+  {
     "a3": "ISR",
     "name": "Israel"
   },
@@ -324,6 +428,10 @@
     "name": "Japan"
   },
   {
+    "a3": "JEY",
+    "name": "Jersey"
+  },
+  {
     "a3": "JOR",
     "name": "Jordan"
   },
@@ -334,6 +442,10 @@
   {
     "a3": "KEN",
     "name": "Kenya"
+  },
+  {
+    "a3": "KIR",
+    "name": "Kiribati"
   },
   {
     "a3": "XKX",
@@ -372,12 +484,20 @@
     "name": "Libya"
   },
   {
+    "a3": "LIE",
+    "name": "Liechtenstein"
+  },
+  {
     "a3": "LTU",
     "name": "Lithuania"
   },
   {
     "a3": "LUX",
     "name": "Luxembourg"
+  },
+  {
+    "a3": "MAC",
+    "name": "Macao"
   },
   {
     "a3": "MKD",
@@ -396,20 +516,44 @@
     "name": "Malaysia"
   },
   {
+    "a3": "MDV",
+    "name": "Maldives"
+  },
+  {
     "a3": "MLI",
     "name": "Mali"
+  },
+  {
+    "a3": "MLT",
+    "name": "Malta"
+  },
+  {
+    "a3": "MHL",
+    "name": "Marshall Is."
   },
   {
     "a3": "MRT",
     "name": "Mauritania"
   },
   {
+    "a3": "MUS",
+    "name": "Mauritius"
+  },
+  {
     "a3": "MEX",
     "name": "Mexico"
   },
   {
+    "a3": "FSM",
+    "name": "Micronesia"
+  },
+  {
     "a3": "MDA",
     "name": "Moldova"
+  },
+  {
+    "a3": "MCO",
+    "name": "Monaco"
   },
   {
     "a3": "MNG",
@@ -418,6 +562,10 @@
   {
     "a3": "MNE",
     "name": "Montenegro"
+  },
+  {
+    "a3": "MSR",
+    "name": "Montserrat"
   },
   {
     "a3": "MAR",
@@ -432,8 +580,16 @@
     "name": "Myanmar"
   },
   {
+    "a3": "MNP",
+    "name": "N. Mariana Is."
+  },
+  {
     "a3": "NAM",
     "name": "Namibia"
+  },
+  {
+    "a3": "NRU",
+    "name": "Nauru"
   },
   {
     "a3": "NPL",
@@ -464,6 +620,14 @@
     "name": "Nigeria"
   },
   {
+    "a3": "NIU",
+    "name": "Niue"
+  },
+  {
+    "a3": "NFK",
+    "name": "Norfolk Island"
+  },
+  {
     "a3": "PRK",
     "name": "North Korea"
   },
@@ -482,6 +646,10 @@
   {
     "a3": "PAK",
     "name": "Pakistan"
+  },
+  {
+    "a3": "PLW",
+    "name": "Palau"
   },
   {
     "a3": "PSE",
@@ -506,6 +674,10 @@
   {
     "a3": "PHL",
     "name": "Philippines"
+  },
+  {
+    "a3": "PCN",
+    "name": "Pitcairn Is."
   },
   {
     "a3": "POL",
@@ -536,8 +708,32 @@
     "name": "Rwanda"
   },
   {
+    "a3": "SGS",
+    "name": "S. Geo. and the Is."
+  },
+  {
     "a3": "SSD",
     "name": "S. Sudan"
+  },
+  {
+    "a3": "SHN",
+    "name": "Saint Helena"
+  },
+  {
+    "a3": "LCA",
+    "name": "Saint Lucia"
+  },
+  {
+    "a3": "WSM",
+    "name": "Samoa"
+  },
+  {
+    "a3": "SMR",
+    "name": "San Marino"
+  },
+  {
+    "a3": "STP",
+    "name": "São Tomé and Principe"
   },
   {
     "a3": "SAU",
@@ -552,8 +748,24 @@
     "name": "Serbia"
   },
   {
+    "a3": "SYC",
+    "name": "Seychelles"
+  },
+  {
+    "a3": "XSG",
+    "name": "Siachen Glacier"
+  },
+  {
     "a3": "SLE",
     "name": "Sierra Leone"
+  },
+  {
+    "a3": "SGP",
+    "name": "Singapore"
+  },
+  {
+    "a3": "SXM",
+    "name": "Sint Maarten"
   },
   {
     "a3": "SVK",
@@ -590,6 +802,26 @@
   {
     "a3": "LKA",
     "name": "Sri Lanka"
+  },
+  {
+    "a3": "BLM",
+    "name": "St-Barthélemy"
+  },
+  {
+    "a3": "MAF",
+    "name": "St-Martin"
+  },
+  {
+    "a3": "KNA",
+    "name": "St. Kitts and Nevis"
+  },
+  {
+    "a3": "SPM",
+    "name": "St. Pierre and Miquelon"
+  },
+  {
+    "a3": "VCT",
+    "name": "St. Vin. and Gren."
   },
   {
     "a3": "SDN",
@@ -636,6 +868,10 @@
     "name": "Togo"
   },
   {
+    "a3": "TON",
+    "name": "Tonga"
+  },
+  {
     "a3": "TTO",
     "name": "Trinidad and Tobago"
   },
@@ -650,6 +886,14 @@
   {
     "a3": "TKM",
     "name": "Turkmenistan"
+  },
+  {
+    "a3": "TCA",
+    "name": "Turks and Caicos Is."
+  },
+  {
+    "a3": "VIR",
+    "name": "U.S. Virgin Is."
   },
   {
     "a3": "UGA",
@@ -684,6 +928,10 @@
     "name": "Vanuatu"
   },
   {
+    "a3": "VAT",
+    "name": "Vatican"
+  },
+  {
     "a3": "VEN",
     "name": "Venezuela"
   },
@@ -694,6 +942,10 @@
   {
     "a3": "ESH",
     "name": "W. Sahara"
+  },
+  {
+    "a3": "WLF",
+    "name": "Wallis and Futuna Is."
   },
   {
     "a3": "YEM",
