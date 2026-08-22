@@ -341,27 +341,9 @@
       });
     });
 
-    // Clip each dot to its own country's exact shape, so a dot near a
-    // border can never visually bleed into a neighboring country.
-    const defs = svg.append("defs");
-    const countriesWithDots = new Set(allPoints.map((d) => d.a3));
-    countriesWithDots.forEach((a3) => {
-      const feature = geo.features.find((f) => f.a3 === a3);
-      if (!feature) return;
-      defs
-        .append("clipPath")
-        .attr("id", `clip-${a3}`)
-        .append("path")
-        .attr("d", path(feature));
-    });
-
-    // Dots stay roughly the same on-screen size at any zoom level, rather
-    // than growing with the map (the usual behavior for plain SVG shapes).
-    const DOT_BASE_R = 2;
-    function dotRadiusFor(k) {
-      return DOT_BASE_R / k; // local (pre-zoom-scale) units
-    }
-
+    // Plain fixed local radius — dots naturally grow larger on screen as
+    // you zoom in (like the country borders do), which makes them easier
+    // to hit rather than harder.
     const dots = pointsLayer
       .selectAll("circle")
       .data(allPoints)
@@ -369,8 +351,7 @@
       .attr("class", "location-dot")
       .attr("cx", (d) => projection([d.lng, d.lat])[0])
       .attr("cy", (d) => projection([d.lng, d.lat])[1])
-      .attr("r", dotRadiusFor(1))
-      .attr("clip-path", (d) => `url(#clip-${d.a3})`)
+      .attr("r", 2.5)
       .attr("vector-effect", "non-scaling-stroke")
       .on("mousemove", (event, d) => showDotTooltip(event, d))
       .on("mouseenter", (event, d) => showDotTooltip(event, d))
@@ -412,7 +393,6 @@
       ])
       .on("zoom", (event) => {
         zoomLayer.attr("transform", event.transform);
-        dots.attr("r", dotRadiusFor(event.transform.k));
       });
 
     svg.call(zoom);
