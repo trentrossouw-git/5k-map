@@ -12,9 +12,14 @@
   --gold-dim: #b6903f;
   --accent: #6fa3c7;
   --accent-dim: #4d7a99;
-  --heat-low: #f4d58d;
-  --heat-mid: #d1495b;
-  --heat-high: #7a1f2b;
+  --rainbow-1: #e64545;
+  --rainbow-2: #e8813c;
+  --rainbow-3: #e0c343;
+  --rainbow-4: #5cb85c;
+  --rainbow-5: #4a90d9;
+  --rainbow-6: #6a5acd;
+  --rainbow-7: #b350c2;
+  --error: #d1495b;
   --radius: 10px;
 }
 
@@ -356,6 +361,12 @@ path.country.unvisited {
   fill: var(--ocean);
 }
 
+path.country.no-coverage {
+  fill: #1a1d24;
+  pointer-events: none; /* no hover tooltip, no click-select */
+  cursor: default;
+}
+
 path.country:hover,
 path.country.pinned {
   filter: brightness(1.28);
@@ -423,20 +434,35 @@ path.country.pinned {
   letter-spacing: 0.06em;
 }
 
-#legend .gradient-bar {
-  width: 160px;
-  height: 10px;
-  border-radius: 4px;
-  background: linear-gradient(to right, var(--heat-low), var(--heat-mid), var(--heat-high));
-  margin-bottom: 4px;
+.rainbow-legend {
+  display: flex;
+  gap: 6px;
 }
 
-#legend .gradient-labels {
+.rainbow-item {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.68rem;
+  color: var(--text-muted);
 }
+
+.rainbow-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  display: block;
+}
+
+.rainbow-swatch[data-n="1"] { background: var(--rainbow-1); }
+.rainbow-swatch[data-n="2"] { background: var(--rainbow-2); }
+.rainbow-swatch[data-n="3"] { background: var(--rainbow-3); }
+.rainbow-swatch[data-n="4"] { background: var(--rainbow-4); }
+.rainbow-swatch[data-n="5"] { background: var(--rainbow-5); }
+.rainbow-swatch[data-n="6"] { background: var(--rainbow-6); }
+.rainbow-swatch[data-n="7"] { background: var(--rainbow-7); }
 
 #legend .unvisited-row {
   display: flex;
@@ -458,6 +484,27 @@ path.country.pinned {
 #legend .unvisited-row:hover {
   border-color: var(--panel-border);
   background: var(--bg);
+}
+
+#legend .unvisited-row.static {
+  cursor: default;
+}
+#legend .unvisited-row.static:hover {
+  border-color: transparent;
+  background: none;
+}
+
+#legend .swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  display: inline-block;
+  flex-shrink: 0;
+  border: 1px solid var(--panel-border);
+}
+
+#legend .no-coverage-swatch {
+  background: #1a1d24;
 }
 
 #legend .unvisited-row.active {
@@ -535,7 +582,7 @@ body.show-unvisited path.country.unvisited {
 #status.hidden { display: none; }
 
 #status .error {
-  color: var(--heat-mid);
+  color: var(--error);
   max-width: 480px;
 }
 
@@ -605,6 +652,6 @@ body.show-unvisited path.country.unvisited {
   }
   .map-pane { height: 70vh; }
   #legend { left: 10px; bottom: 10px; padding: 10px 12px; }
-  #legend .gradient-bar { width: 120px; }
+  .rainbow-legend { flex-wrap: wrap; }
   #zoom-controls { right: 10px; bottom: 10px; }
 }
