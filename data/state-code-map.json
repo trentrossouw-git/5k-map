@@ -1,0 +1,206 @@
+{
+  "10": {
+    "code": "US-DE",
+    "name": "Delaware"
+  },
+  "11": {
+    "code": "US-DC",
+    "name": "District of Columbia"
+  },
+  "12": {
+    "code": "US-FL",
+    "name": "Florida"
+  },
+  "13": {
+    "code": "US-GA",
+    "name": "Georgia"
+  },
+  "15": {
+    "code": "US-HI",
+    "name": "Hawaii"
+  },
+  "16": {
+    "code": "US-ID",
+    "name": "Idaho"
+  },
+  "17": {
+    "code": "US-IL",
+    "name": "Illinois"
+  },
+  "18": {
+    "code": "US-IN",
+    "name": "Indiana"
+  },
+  "19": {
+    "code": "US-IA",
+    "name": "Iowa"
+  },
+  "20": {
+    "code": "US-KS",
+    "name": "Kansas"
+  },
+  "21": {
+    "code": "US-KY",
+    "name": "Kentucky"
+  },
+  "22": {
+    "code": "US-LA",
+    "name": "Louisiana"
+  },
+  "23": {
+    "code": "US-ME",
+    "name": "Maine"
+  },
+  "24": {
+    "code": "US-MD",
+    "name": "Maryland"
+  },
+  "25": {
+    "code": "US-MA",
+    "name": "Massachusetts"
+  },
+  "26": {
+    "code": "US-MI",
+    "name": "Michigan"
+  },
+  "27": {
+    "code": "US-MN",
+    "name": "Minnesota"
+  },
+  "28": {
+    "code": "US-MS",
+    "name": "Mississippi"
+  },
+  "29": {
+    "code": "US-MO",
+    "name": "Missouri"
+  },
+  "30": {
+    "code": "US-MT",
+    "name": "Montana"
+  },
+  "31": {
+    "code": "US-NE",
+    "name": "Nebraska"
+  },
+  "32": {
+    "code": "US-NV",
+    "name": "Nevada"
+  },
+  "33": {
+    "code": "US-NH",
+    "name": "New Hampshire"
+  },
+  "34": {
+    "code": "US-NJ",
+    "name": "New Jersey"
+  },
+  "35": {
+    "code": "US-NM",
+    "name": "New Mexico"
+  },
+  "36": {
+    "code": "US-NY",
+    "name": "New York"
+  },
+  "37": {
+    "code": "US-NC",
+    "name": "North Carolina"
+  },
+  "38": {
+    "code": "US-ND",
+    "name": "North Dakota"
+  },
+  "39": {
+    "code": "US-OH",
+    "name": "Ohio"
+  },
+  "40": {
+    "code": "US-OK",
+    "name": "Oklahoma"
+  },
+  "41": {
+    "code": "US-OR",
+    "name": "Oregon"
+  },
+  "42": {
+    "code": "US-PA",
+    "name": "Pennsylvania"
+  },
+  "44": {
+    "code": "US-RI",
+    "name": "Rhode Island"
+  },
+  "45": {
+    "code": "US-SC",
+    "name": "South Carolina"
+  },
+  "46": {
+    "code": "US-SD",
+    "name": "South Dakota"
+  },
+  "47": {
+    "code": "US-TN",
+    "name": "Tennessee"
+  },
+  "48": {
+    "code": "US-TX",
+    "name": "Texas"
+  },
+  "49": {
+    "code": "US-UT",
+    "name": "Utah"
+  },
+  "50": {
+    "code": "US-VT",
+    "name": "Vermont"
+  },
+  "51": {
+    "code": "US-VA",
+    "name": "Virginia"
+  },
+  "53": {
+    "code": "US-WA",
+    "name": "Washington"
+  },
+  "54": {
+    "code": "US-WV",
+    "name": "West Virginia"
+  },
+  "55": {
+    "code": "US-WI",
+    "name": "Wisconsin"
+  },
+  "56": {
+    "code": "US-WY",
+    "name": "Wyoming"
+  },
+  "01": {
+    "code": "US-AL",
+    "name": "Alabama"
+  },
+  "02": {
+    "code": "US-AK",
+    "name": "Alaska"
+  },
+  "04": {
+    "code": "US-AZ",
+    "name": "Arizona"
+  },
+  "08": {
+    "code": "US-CO",
+    "name": "Colorado"
+  },
+  "09": {
+    "code": "US-CT",
+    "name": "Connecticut"
+  },
+  "05": {
+    "code": "US-AR",
+    "name": "Arkansas"
+  },
+  "06": {
+    "code": "US-CA",
+    "name": "California"
+  }
+}
