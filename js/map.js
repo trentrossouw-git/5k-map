@@ -159,8 +159,9 @@
     // Sheet is one row PER 5K: date, country_code, note, maps_link. Build
     // both a count-per-country map and a full list of dated entries per
     // country from that.
-    const entriesByCountry = new Map(); // a3 -> [{date, note, link, lat, lng}, ...] sorted newest first
+    const entriesByCountry = new Map(); // a3 -> [{date, note, link, lat, lng, globalSeq}, ...] sorted newest first
 
+    let globalSeq = 0; // counts every logged 5K in sheet order, across all countries
     for (const row of rows) {
       const code = (row.country_code || "").trim().toUpperCase();
       if (!code) continue;
@@ -168,6 +169,7 @@
       const note = (row.note || "").trim();
       const link = (row.maps_link || "").trim();
       const coords = extractLatLng(link);
+      globalSeq += 1;
       if (!entriesByCountry.has(code)) entriesByCountry.set(code, []);
       entriesByCountry.get(code).push({
         date,
@@ -175,6 +177,7 @@
         link,
         lat: coords ? coords.lat : null,
         lng: coords ? coords.lng : null,
+        globalSeq,
       });
     }
     entriesByCountry.forEach((list) => {
@@ -334,12 +337,9 @@
 
     const allPoints = [];
     entriesByCountry.forEach((list, code) => {
-      // list is sorted newest-first; number them oldest=1 up to newest=count,
-      // so the number on each dot reflects "this was your Nth 5K here."
-      const total = list.length;
-      list.forEach((e, i) => {
+      list.forEach((e) => {
         if (e.lat != null && e.lng != null) {
-          allPoints.push({ ...e, a3: code, seq: total - i });
+          allPoints.push({ ...e, a3: code, seq: e.globalSeq });
         }
       });
     });
@@ -398,7 +398,8 @@
       const feature = geo.features.find((f) => f.a3 === d.a3);
       const countryName = feature ? feature.displayName : d.a3;
       tooltip.innerHTML =
-        `<span class="t-name">${countryName} #${d.seq}</span>` +
+        `<span class="t-name">${countryName}</span>` +
+        `5K #${d.seq} · ` +
         `${d.date || "—"}` +
         (d.note ? `<br><span style="opacity:0.7">${escapeHtml(d.note)}</span>` : "") +
         (d.link ? `<br><span style="opacity:0.55">Click to view ↗</span>` : "");
