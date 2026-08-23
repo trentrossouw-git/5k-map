@@ -344,6 +344,40 @@
       ["100%", "#7a5c12"],
     ]);
 
+    // Animated shine sweep — a thin bright band that continuously travels
+    // diagonally across every bronze/silver/gold country in sync, layered
+    // on top of the metallic fill as a separate overlay shape. The motion
+    // is a plain SVG/SMIL animation on the gradient itself (no JS loop).
+    const shineGradient = defs
+      .append("linearGradient")
+      .attr("id", "shine-sweep")
+      .attr("gradientUnits", "objectBoundingBox")
+      .attr("x1", "0%")
+      .attr("y1", "0%")
+      .attr("x2", "100%")
+      .attr("y2", "100%");
+    [
+      ["0%", 0],
+      ["42%", 0],
+      ["50%", 0.65],
+      ["58%", 0],
+      ["100%", 0],
+    ].forEach(([offset, opacity]) => {
+      shineGradient
+        .append("stop")
+        .attr("offset", offset)
+        .attr("stop-color", "#ffffff")
+        .attr("stop-opacity", opacity);
+    });
+    shineGradient
+      .append("animateTransform")
+      .attr("attributeName", "gradientTransform")
+      .attr("type", "translate")
+      .attr("from", "-1.5 -1.5")
+      .attr("to", "1.5 1.5")
+      .attr("dur", "3.2s")
+      .attr("repeatCount", "indefinite");
+
     // Selected-country effect: a crisp, solid (non-blurred) offset shadow —
     // a silhouette of the exact same shape, shifted down-right and merged
     // behind the original. This is a filter on the shape itself, so it
@@ -438,6 +472,24 @@
           selectCountry(d);
         }
       });
+
+    // Shine overlay: a non-interactive duplicate shape, same outline as
+    // each bronze/silver/gold country, filled with the animated sweep
+    // gradient above. Sits on top of the flat metallic fill so the sweep
+    // is visible without affecting hover/click on the real country path.
+    const metallicFeatures = allFeatures.filter((d) => {
+      const c = d.a3 ? counts.get(d.a3) : null;
+      return c && c >= 8;
+    });
+    zoomLayer
+      .append("g")
+      .attr("class", "shine-layer")
+      .style("pointer-events", "none")
+      .selectAll("path")
+      .data(metallicFeatures)
+      .join("path")
+      .attr("d", (d) => path(d))
+      .attr("fill", "url(#shine-sweep)");
 
     // ---------- Location dots (exact 5K pinpoints, from maps_link) ----------
     const pointsLayer = zoomLayer.append("g").attr("class", "points-layer");
