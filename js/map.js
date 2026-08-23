@@ -538,6 +538,22 @@
     document.getElementById("zoom-reset").onclick = () =>
       svg.transition().duration(300).call(zoom.transform, d3.zoomIdentity);
 
+    // Safety net: SVG can occasionally miss a mouseleave event when the
+    // cursor crosses quickly between adjacent country borders, leaving a
+    // stale tooltip stuck on screen. This runs on every mousemove within
+    // the map and force-hides the tooltip if the cursor isn't actually
+    // over a hoverable shape (a country or a dot) — a continuous
+    // correctness check that doesn't depend on any single enter/leave
+    // pair firing reliably.
+    svg.on("mousemove.tooltip-guard", (event) => {
+      const target = event.target;
+      const isHoverable =
+        target &&
+        target.classList &&
+        (target.classList.contains("country") || target.classList.contains("location-dot"));
+      if (!isHoverable) hideTooltip();
+    });
+
     // ---------- "Not yet 5K'd" toggle ----------
     const unvisitedToggle = document.getElementById("unvisited-toggle");
     unvisitedToggle.addEventListener("click", () => {
