@@ -613,7 +613,8 @@ path.country.pinned {
 }
 
 .location-dot.pinned-dot,
-.dot-label.pinned-dot {
+.dot-label.pinned-dot,
+.shine-layer path.pinned-dot {
   transform: translate(-1.4px, -1.9px);
   transition: transform 0.2s ease;
 }
