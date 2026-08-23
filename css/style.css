@@ -602,10 +602,19 @@ path.country:hover {
 }
 
 path.country.pinned {
-  filter: url(#pinned-lift);
   stroke: var(--gold);
   stroke-width: 2px;
-  transform: translate(-2.5px, -3.5px);
+  transform: translate(-1.4px, -1.9px);
+  transition: transform 0.2s ease;
+}
+
+.pinned-wall {
+  pointer-events: none;
+}
+
+.location-dot.pinned-dot,
+.dot-label.pinned-dot {
+  transform: translate(-1.4px, -1.9px);
   transition: transform 0.2s ease;
 }
 
