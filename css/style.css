@@ -602,13 +602,11 @@ path.country:hover {
 }
 
 path.country.pinned {
-  filter: url(#pinned-glow) brightness(1.12);
+  filter: url(#pinned-lift);
   stroke: var(--gold);
-  stroke-width: 1.7;
-  transform-box: fill-box;
-  transform-origin: 50% 50%;
-  transform: scale(1.035);
-  transition: transform 0.22s ease;
+  stroke-width: 2px;
+  transform: translate(-2.5px, -3.5px);
+  transition: transform 0.2s ease;
 }
 
 .graticule {
