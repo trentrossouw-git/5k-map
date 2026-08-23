@@ -595,11 +595,24 @@ path.country.no-coverage {
   cursor: default;
 }
 
-path.country:hover,
-path.country.pinned {
+path.country:hover {
   filter: brightness(1.28);
   stroke: var(--gold);
   stroke-width: 1.1;
+}
+
+path.country.pinned {
+  filter: url(#pinned-glow) brightness(1.12);
+  stroke: var(--gold);
+  stroke-width: 1.7;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  transform: scale(1.035);
+  transition: transform 0.22s ease;
+}
+
+.extrusion-face {
+  pointer-events: none;
 }
 
 .graticule {
