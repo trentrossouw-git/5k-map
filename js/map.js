@@ -137,6 +137,14 @@
     return div.innerHTML;
   }
 
+  function darkenColor(hex, factor) {
+    const c = hex.replace("#", "");
+    const r = Math.round(parseInt(c.substring(0, 2), 16) * factor);
+    const g = Math.round(parseInt(c.substring(2, 4), 16) * factor);
+    const b = Math.round(parseInt(c.substring(4, 6), 16) * factor);
+    return `rgb(${r},${g},${b})`;
+  }
+
   // Pulls {lat, lng} out of a Google Maps / Street View URL, if present.
   // Handles the pano share format (?viewpoint=LAT,LNG), the q=/ll= query
   // param format, and the @LAT,LNG map-view format. Returns null if none
@@ -269,6 +277,18 @@
       if (count === 8) return "url(#fill-bronze)";
       const idx = Math.min(Math.max(count, 1), 7) - 1;
       return RAINBOW[idx];
+    }
+
+    // A flat, darkenable representative color per tier — used for the
+    // "wall" revealed when a country is pulled off the map (see
+    // selectCountry). The metallic tiers use their gradient's mid-tone
+    // rather than the gradient itself, since a gradient can't be darkened
+    // as a simple color.
+    const METAL_BASE = { 8: "#8a5a28", 9: "#b4b4b8", 10: "#d4af37" };
+    function wallColorFor(count) {
+      if (!count) return "#000000";
+      const base = count >= 10 ? METAL_BASE[10] : METAL_BASE[count] || RAINBOW[Math.min(Math.max(count, 1), 7) - 1];
+      return darkenColor(base, 0.42);
     }
 
     // ---------- Projection & path ----------
@@ -441,8 +461,8 @@
 
     let pinned = null;
 
-    const paths = zoomLayer
-      .append("g")
+    const countriesGroup = zoomLayer.append("g");
+    const paths = countriesGroup
       .selectAll("path")
       .data(allFeatures)
       .join("path")
@@ -643,10 +663,28 @@
       pinned = d;
       hideTooltip();
       paths.classed("pinned", (dd) => dd === d);
-      // Bring the selected country above all its neighbors, so the offset
-      // shadow and shift are never clipped by an adjacent country drawn
-      // later in the original (unordered) draw sequence.
+
+      // A single darker copy of the same shape, left at the country's
+      // real (unshifted) position. Since the top shape physically moves
+      // away from it, this shows through as a same-hue rim in the gap —
+      // "pulled out of a slot," rather than a plain shadow.
+      countriesGroup.select(".pinned-wall").remove();
+      const c = d.a3 ? counts.get(d.a3) : null;
+      countriesGroup
+        .append("path")
+        .attr("class", "pinned-wall")
+        .attr("d", path(d))
+        .attr("fill", wallColorFor(c));
+
+      // Bring the selected country above both the wall and all its
+      // neighbors, so it's never clipped by anything drawn after it in
+      // the original (unordered) draw sequence.
       paths.filter((dd) => dd === d).raise();
+
+      // Any dots/number-labels belonging to this country shift along with
+      // it, so they don't appear to detach from their own country.
+      dots.classed("pinned-dot", (dd) => dd.a3 === d.a3);
+      dotLabels.classed("pinned-dot", (dd) => dd.a3 === d.a3);
 
       const [[x0, y0], [x1, y1]] = path.bounds(d);
       const dx = x1 - x0;
@@ -668,6 +706,9 @@
       pinned = null;
       hideTooltip();
       paths.classed("pinned", false);
+      countriesGroup.select(".pinned-wall").remove();
+      dots.classed("pinned-dot", false);
+      dotLabels.classed("pinned-dot", false);
       renderCountryDetail(null);
       highlightLeaderboard(null);
     }
