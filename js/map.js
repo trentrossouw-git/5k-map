@@ -344,6 +344,22 @@
       ["100%", "#7a5c12"],
     ]);
 
+    // Soft gold glow used on the currently-selected country.
+    const glowFilter = defs
+      .append("filter")
+      .attr("id", "pinned-glow")
+      .attr("x", "-60%")
+      .attr("y", "-60%")
+      .attr("width", "220%")
+      .attr("height", "220%");
+    glowFilter
+      .append("feDropShadow")
+      .attr("dx", 0)
+      .attr("dy", 0)
+      .attr("stdDeviation", 2.6)
+      .attr("flood-color", "#e8b85c")
+      .attr("flood-opacity", 0.9);
+
     // Everything that pans/zooms together lives in this group.
     const zoomLayer = svg.append("g").attr("class", "zoom-layer");
 
@@ -405,6 +421,11 @@
           selectCountry(d);
         }
       });
+
+    // A stack of darkened, offset copies of the selected country's shape,
+    // sitting just above the flat fills but below the dots — creates a
+    // "layered/lifted" pseudo-3D look without any actual 3D rendering.
+    const extrusionLayer = zoomLayer.append("g").attr("class", "extrusion-layer");
 
     // ---------- Location dots (exact 5K pinpoints, from maps_link) ----------
     const pointsLayer = zoomLayer.append("g").attr("class", "points-layer");
@@ -542,6 +563,7 @@
       pinned = d;
       hideTooltip();
       paths.classed("pinned", (dd) => dd === d);
+      buildExtrusion(d);
 
       const [[x0, y0], [x1, y1]] = path.bounds(d);
       const dx = x1 - x0;
@@ -563,8 +585,26 @@
       pinned = null;
       hideTooltip();
       paths.classed("pinned", false);
+      extrusionLayer.selectAll("*").remove();
       renderCountryDetail(null);
       highlightLeaderboard(null);
+    }
+
+    // Draws a short stack of darkened, offset copies of the country's own
+    // shape behind it, simulating a raised "tile" stepping up off the map.
+    function buildExtrusion(d) {
+      extrusionLayer.selectAll("*").remove();
+      const shapeD = path(d);
+      const LAYERS = 4;
+      const STEP = 1.15; // local units per layer
+      for (let i = LAYERS; i >= 1; i--) {
+        extrusionLayer
+          .append("path")
+          .attr("d", shapeD)
+          .attr("class", "extrusion-face")
+          .attr("transform", `translate(${STEP * i},${STEP * i})`)
+          .attr("fill", `rgba(0,0,0,${0.16 + i * 0.06})`);
+      }
     }
 
     // ---------- Stats ----------
