@@ -501,7 +501,7 @@
       const c = d.a3 ? counts.get(d.a3) : null;
       return c && c >= 8;
     });
-    zoomLayer
+    const shinePaths = zoomLayer
       .append("g")
       .attr("class", "shine-layer")
       .style("pointer-events", "none")
@@ -681,10 +681,11 @@
       // the original (unordered) draw sequence.
       paths.filter((dd) => dd === d).raise();
 
-      // Any dots/number-labels belonging to this country shift along with
-      // it, so they don't appear to detach from their own country.
+      // Any dots/number-labels/metallic shine belonging to this country
+      // shift along with it, so nothing appears to detach from it.
       dots.classed("pinned-dot", (dd) => dd.a3 === d.a3);
       dotLabels.classed("pinned-dot", (dd) => dd.a3 === d.a3);
+      shinePaths.classed("pinned-dot", (dd) => dd.a3 === d.a3);
 
       const [[x0, y0], [x1, y1]] = path.bounds(d);
       const dx = x1 - x0;
@@ -709,6 +710,7 @@
       countriesGroup.select(".pinned-wall").remove();
       dots.classed("pinned-dot", false);
       dotLabels.classed("pinned-dot", false);
+      shinePaths.classed("pinned-dot", false);
       renderCountryDetail(null);
       highlightLeaderboard(null);
     }
