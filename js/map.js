@@ -291,6 +291,70 @@
       return darkenColor(base, 0.42);
     }
 
+    // Builds the actual "side" of an extruded block: for every polygon
+    // edge the top surface is moving AWAY from (uncovering) as it shifts
+    // by (offsetX, offsetY), emit a quad connecting that edge to itself
+    // shifted by the same vector. Since one side of each quad IS exactly
+    // the shifted top's boundary, this touches it with zero gap by
+    // construction — it's a real swept side face, not a second copy of
+    // the whole shape guessed to roughly line up.
+    function buildWallPathData(feature, offsetX, offsetY) {
+      const geom = feature.geometry;
+      if (!geom) return "";
+      const rings = [];
+      if (geom.type === "Polygon") {
+        geom.coordinates.forEach((ring) => rings.push(ring));
+      } else if (geom.type === "MultiPolygon") {
+        geom.coordinates.forEach((poly) => poly.forEach((ring) => rings.push(ring)));
+      } else {
+        return "";
+      }
+
+      let d = "";
+      rings.forEach((ring) => {
+        const pts = ring.map((coord) => projection(coord)).filter(Boolean);
+        if (pts.length < 3) return;
+
+        let cx = 0;
+        let cy = 0;
+        pts.forEach((p) => {
+          cx += p[0];
+          cy += p[1];
+        });
+        cx /= pts.length;
+        cy /= pts.length;
+
+        for (let i = 0; i < pts.length; i++) {
+          const p1 = pts[i];
+          const p2 = pts[(i + 1) % pts.length];
+          const ex = p2[0] - p1[0];
+          const ey = p2[1] - p1[1];
+          const len = Math.hypot(ex, ey);
+          if (len < 0.0001) continue;
+
+          // Two candidate perpendiculars; the outward one is whichever
+          // points away from the ring's own centroid.
+          const nax = ey / len;
+          const nay = -ex / len;
+          const midx = (p1[0] + p2[0]) / 2;
+          const midy = (p1[1] + p2[1]) / 2;
+          const distA = Math.hypot(midx + nax - cx, midy + nay - cy);
+          const distB = Math.hypot(midx - nax - cx, midy - nay - cy);
+          const nx = distA > distB ? nax : -nax;
+          const ny = distA > distB ? nay : -nay;
+
+          // Only the edges the shift is uncovering get a wall quad.
+          const dot = offsetX * nx + offsetY * ny;
+          if (dot >= 0) continue;
+
+          const p1o = [p1[0] + offsetX, p1[1] + offsetY];
+          const p2o = [p2[0] + offsetX, p2[1] + offsetY];
+          d += `M${p1[0]},${p1[1]} L${p2[0]},${p2[1]} L${p2o[0]},${p2o[1]} L${p1o[0]},${p1o[1]} Z `;
+        }
+      });
+      return d;
+    }
+
     // ---------- Projection & path ----------
     const container = document.querySelector(".map-pane");
     const width = container.clientWidth;
@@ -664,17 +728,21 @@
       hideTooltip();
       paths.classed("pinned", (dd) => dd === d);
 
-      // A single darker copy of the same shape, left at the country's
-      // real (unshifted) position. Since the top shape physically moves
-      // away from it, this shows through as a same-hue rim in the gap —
-      // "pulled out of a slot," rather than a plain shadow.
+      // The physical "side" of the block: a swept band connecting the
+      // original edges to their shifted position, touching the top
+      // surface with zero gap by construction. Shares the top surface's
+      // gold outline and non-scaling stroke so both pieces read as one
+      // continuous bordered block.
       countriesGroup.select(".pinned-wall").remove();
       const c = d.a3 ? counts.get(d.a3) : null;
+      const OFFSET_X = -1.4;
+      const OFFSET_Y = -1.9;
       countriesGroup
         .append("path")
         .attr("class", "pinned-wall")
-        .attr("d", path(d))
-        .attr("fill", wallColorFor(c));
+        .attr("d", buildWallPathData(d, OFFSET_X, OFFSET_Y))
+        .attr("fill", wallColorFor(c))
+        .attr("vector-effect", "non-scaling-stroke");
 
       // Bring the selected country above both the wall and all its
       // neighbors, so it's never clipped by anything drawn after it in
