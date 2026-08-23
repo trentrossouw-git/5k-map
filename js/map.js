@@ -726,7 +726,16 @@
     function selectCountry(d) {
       pinned = d;
       hideTooltip();
+
+      // Apply every class change that triggers a CSS transition together,
+      // in one block, before any DOM mutations below (wall creation,
+      // raise()). Structural DOM changes sitting between these can force
+      // the browser to commit them in separate frames, which is what was
+      // causing the country to visibly shift before its own dots did.
       paths.classed("pinned", (dd) => dd === d);
+      dots.classed("pinned-dot", (dd) => dd.a3 === d.a3);
+      dotLabels.classed("pinned-dot", (dd) => dd.a3 === d.a3);
+      shinePaths.classed("pinned-dot", (dd) => dd.a3 === d.a3);
 
       // The physical "side" of the block: a swept band connecting the
       // original edges to their shifted position, touching the top
@@ -748,12 +757,6 @@
       // neighbors, so it's never clipped by anything drawn after it in
       // the original (unordered) draw sequence.
       paths.filter((dd) => dd === d).raise();
-
-      // Any dots/number-labels/metallic shine belonging to this country
-      // shift along with it, so nothing appears to detach from it.
-      dots.classed("pinned-dot", (dd) => dd.a3 === d.a3);
-      dotLabels.classed("pinned-dot", (dd) => dd.a3 === d.a3);
-      shinePaths.classed("pinned-dot", (dd) => dd.a3 === d.a3);
 
       const [[x0, y0], [x1, y1]] = path.bounds(d);
       const dx = x1 - x0;
