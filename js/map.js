@@ -344,31 +344,38 @@
       ["100%", "#7a5c12"],
     ]);
 
-    // Selected-country effect: a soft gold glow (all around, for visibility)
-    // plus a directional dark shadow (down-right, for a "lifted card" cue).
-    // Both are per-pixel filter effects on the shape itself — no duplicate
-    // geometry involved, so it stays correct at any zoom level or shape.
-    const glowFilter = defs
+    // Selected-country effect: a crisp, solid (non-blurred) offset shadow —
+    // a silhouette of the exact same shape, shifted down-right and merged
+    // behind the original. This is a filter on the shape itself, so it
+    // always renders in the right z-order without needing separate
+    // duplicate geometry (which is what caused the earlier "crater" bug).
+    const liftFilter = defs
       .append("filter")
-      .attr("id", "pinned-glow")
-      .attr("x", "-60%")
-      .attr("y", "-60%")
-      .attr("width", "220%")
-      .attr("height", "220%");
-    glowFilter
-      .append("feDropShadow")
-      .attr("dx", 0)
-      .attr("dy", 0)
-      .attr("stdDeviation", 2.6)
-      .attr("flood-color", "#e8b85c")
-      .attr("flood-opacity", 0.85);
-    glowFilter
-      .append("feDropShadow")
-      .attr("dx", 1.4)
-      .attr("dy", 2.2)
-      .attr("stdDeviation", 1.6)
+      .attr("id", "pinned-lift")
+      .attr("x", "-40%")
+      .attr("y", "-40%")
+      .attr("width", "180%")
+      .attr("height", "180%");
+    liftFilter
+      .append("feOffset")
+      .attr("in", "SourceAlpha")
+      .attr("dx", 2.5)
+      .attr("dy", 3.5)
+      .attr("result", "offsetAlpha");
+    liftFilter
+      .append("feFlood")
       .attr("flood-color", "#000000")
-      .attr("flood-opacity", 0.55);
+      .attr("flood-opacity", 0.55)
+      .attr("result", "shadowColor");
+    liftFilter
+      .append("feComposite")
+      .attr("in", "shadowColor")
+      .attr("in2", "offsetAlpha")
+      .attr("operator", "in")
+      .attr("result", "shadow");
+    const liftMerge = liftFilter.append("feMerge");
+    liftMerge.append("feMergeNode").attr("in", "shadow");
+    liftMerge.append("feMergeNode").attr("in", "SourceGraphic");
 
     // Everything that pans/zooms together lives in this group.
     const zoomLayer = svg.append("g").attr("class", "zoom-layer");
@@ -584,6 +591,10 @@
       pinned = d;
       hideTooltip();
       paths.classed("pinned", (dd) => dd === d);
+      // Bring the selected country above all its neighbors, so the offset
+      // shadow and shift are never clipped by an adjacent country drawn
+      // later in the original (unordered) draw sequence.
+      paths.filter((dd) => dd === d).raise();
 
       const [[x0, y0], [x1, y1]] = path.bounds(d);
       const dx = x1 - x0;
