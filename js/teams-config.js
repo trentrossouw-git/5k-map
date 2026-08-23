@@ -17,7 +17,8 @@ const SHEET_ID = "1Hrrww0MC2LItlEdhl5xCcw12qad4A1aitvbKodyO5Iw";
 
 const TEAMS = {
   "close-enough": { label: "Close Enough", tab: "Close Enough" },
-  "catfishermen": { label: "Catfishermen", tab: "Catfishermen" }
+  "catfishermen": { label: "Catfishermen", tab: "Catfishermen" },
+  "homework-help": { label: "Homework Help", tab: "Homework Help" }
 };
 
 function csvUrlForTab(tabName) {
