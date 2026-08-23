@@ -610,6 +610,7 @@ path.country.pinned {
 
 .pinned-wall {
   pointer-events: none;
+  stroke: none;
 }
 
 .location-dot.pinned-dot,
