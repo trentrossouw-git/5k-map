@@ -730,9 +730,10 @@
 
       // The physical "side" of the block: a swept band connecting the
       // original edges to their shifted position, touching the top
-      // surface with zero gap by construction. Shares the top surface's
-      // gold outline and non-scaling stroke so both pieces read as one
-      // continuous bordered block.
+      // surface with zero gap by construction. Solid flat fill, no
+      // stroke — each individual quad segment would otherwise get its
+      // own outline, showing up as gold lines through the middle of the
+      // wall at every original coastline vertex.
       countriesGroup.select(".pinned-wall").remove();
       const c = d.a3 ? counts.get(d.a3) : null;
       const OFFSET_X = -1.4;
@@ -741,8 +742,7 @@
         .append("path")
         .attr("class", "pinned-wall")
         .attr("d", buildWallPathData(d, OFFSET_X, OFFSET_Y))
-        .attr("fill", wallColorFor(c))
-        .attr("vector-effect", "non-scaling-stroke");
+        .attr("fill", wallColorFor(c));
 
       // Bring the selected country above both the wall and all its
       // neighbors, so it's never clipped by anything drawn after it in
