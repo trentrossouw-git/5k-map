@@ -611,10 +611,6 @@ path.country.pinned {
   transition: transform 0.22s ease;
 }
 
-.extrusion-face {
-  pointer-events: none;
-}
-
 .graticule {
   fill: none;
   stroke: var(--graticule);
